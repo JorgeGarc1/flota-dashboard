@@ -1,5 +1,6 @@
 
 import { cn } from "@/lib/utils";
+import React from "react";
 
 type StatCardProps = {
   title: string;
@@ -7,9 +8,10 @@ type StatCardProps = {
   description?: string;
   icon?: React.ReactNode;
   className?: string;
+  children?: React.ReactNode;
 };
 
-export function StatCard({ title, value, description, icon, className }: StatCardProps) {
+export function StatCard({ title, value, description, icon, className, children }: StatCardProps) {
   return (
     <div className={cn("card-stat", className)}>
       {icon && <div className="mb-3 text-flota-primary">{icon}</div>}
@@ -24,6 +26,7 @@ export function StatCard({ title, value, description, icon, className }: StatCar
           {description}
         </div>
       )}
+      {children}
     </div>
   );
 }

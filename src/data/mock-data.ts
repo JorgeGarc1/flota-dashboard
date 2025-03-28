@@ -1,4 +1,3 @@
-
 // Datos de muestra para la visualización financiera
 export const gastosPorCategoria = [
   { name: "Combustible", value: 45000, color: "#FF9900" },
@@ -59,11 +58,108 @@ export const viajesDiarios = [
 ];
 
 export const kpisOperativos = {
-  incidencias: 12,
+  asistencias: 28,
   kilometros: 45680,
   combustible: 8950,
+  combustiblePresupuestado: 10000,
   pedidosEntregados: 340,
+  pedidosProgramados: 380
 };
+
+// Nuevos datos para la tabla de vehículos
+export const vehiculosData = [
+  {
+    numeroEco: "FL001",
+    estatus: "Ruta",
+    kilometrosAcumulados: 125680,
+    operadorAsignado: "Carlos Gómez",
+    nivelServicio: 95,
+    rendimientoPromedio: 3.2,
+    incidencias: 2,
+    saldoCasetas: 1580,
+    kmParaServicio: 4320,
+    costoPorKm: 8.5,
+    polizaSeguro: "Vigente"
+  },
+  {
+    numeroEco: "FL002",
+    estatus: "Taller",
+    kilometrosAcumulados: 98750,
+    operadorAsignado: "Manuel López",
+    nivelServicio: 78,
+    rendimientoPromedio: 2.9,
+    incidencias: 5,
+    saldoCasetas: 980,
+    kmParaServicio: 1250,
+    costoPorKm: 9.2,
+    polizaSeguro: "Vigente"
+  },
+  {
+    numeroEco: "FL003",
+    estatus: "Disponible",
+    kilometrosAcumulados: 112450,
+    operadorAsignado: "Rafael Mora",
+    nivelServicio: 92,
+    rendimientoPromedio: 3.4,
+    incidencias: 1,
+    saldoCasetas: 2100,
+    kmParaServicio: 5500,
+    costoPorKm: 7.8,
+    polizaSeguro: "Vigente"
+  },
+  {
+    numeroEco: "FL004",
+    estatus: "Sin operador",
+    kilometrosAcumulados: 85600,
+    operadorAsignado: "---",
+    nivelServicio: 0,
+    rendimientoPromedio: 3.1,
+    incidencias: 0,
+    saldoCasetas: 950,
+    kmParaServicio: 9800,
+    costoPorKm: 8.9,
+    polizaSeguro: "Vigente"
+  },
+  {
+    numeroEco: "FL005",
+    estatus: "Retorno",
+    kilometrosAcumulados: 156700,
+    operadorAsignado: "Luis Ramírez",
+    nivelServicio: 88,
+    rendimientoPromedio: 2.8,
+    incidencias: 3,
+    saldoCasetas: 1450,
+    kmParaServicio: 3200,
+    costoPorKm: 9.5,
+    polizaSeguro: "Vencida"
+  },
+  {
+    numeroEco: "FL006",
+    estatus: "CEDIS",
+    kilometrosAcumulados: 132800,
+    operadorAsignado: "Miguel Ángel Fuentes",
+    nivelServicio: 90,
+    rendimientoPromedio: 3.0,
+    incidencias: 2,
+    saldoCasetas: 1800,
+    kmParaServicio: 7500,
+    costoPorKm: 8.2,
+    polizaSeguro: "Vigente"
+  },
+  {
+    numeroEco: "FL007",
+    estatus: "En rampa",
+    kilometrosAcumulados: 108950,
+    operadorAsignado: "Juan Carlos Vega",
+    nivelServicio: 85,
+    rendimientoPromedio: 3.3,
+    incidencias: 4,
+    saldoCasetas: 1250,
+    kmParaServicio: 6300,
+    costoPorKm: 8.7,
+    polizaSeguro: "Vigente"
+  },
+];
 
 // Datos de muestra para acciones ejecutivas
 export const accionesEjecutivas = [
