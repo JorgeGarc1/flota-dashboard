@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
@@ -87,37 +88,29 @@ export default function AgendaPage() {
     setIsEditDialogOpen(false);
   };
 
-  // Modificamos el enfoque de renderizado del calendario para evitar errores de TypeScript
-  const handleRenderDay = (day: Date, modifiers: any) => {
-    const events = getEventsByDate(day);
-    if (events.length === 0) return null;
+  // Componente personalizado para renderizar el contenido del día
+  const CustomDayContent = (props: DayContentProps) => {
+    const { date, ...rest } = props;
+    const events = getEventsByDate(date);
     
-    const event = events[0]; // Tomamos el primer evento si hay varios
-    let bgColorClass = "";
-    
-    switch (event.estado) {
-      case "completado":
-        bgColorClass = "bg-green-500";
-        break;
-      case "pendiente":
-        bgColorClass = "bg-flota-primary";
-        break;
-      case "vencido":
-        bgColorClass = "bg-flota-danger";
-        break;
-      case "proximo":
-        bgColorClass = "bg-amber-500";
-        break;
-      default:
-        bgColorClass = "bg-flota-secondary";
-    }
-    
-    // Usamos classNames para personalizar el aspecto del día
-    return {
-      className: cn(modifiers.day_today ? "bg-flota-primary/20" : "", 
-                   modifiers.day_selected ? "bg-flota-primary text-black" : "",
-                   "relative")
-    };
+    return (
+      <div className="relative">
+        <div>{date.getDate()}</div>
+        {events.length > 0 && (
+          <>
+            <div className={`absolute h-2 w-2 ${
+              events[0].estado === "completado" ? "bg-green-500" :
+              events[0].estado === "pendiente" ? "bg-flota-primary" :
+              events[0].estado === "vencido" ? "bg-flota-danger" :
+              "bg-amber-500"
+            } rounded-full bottom-0.5 left-1/2 -ml-1`} />
+            {events.length > 1 && (
+              <div className="absolute text-xs bottom-0.5 right-1">+{events.length - 1}</div>
+            )}
+          </>
+        )}
+      </div>
+    );
   };
 
   const selectedEvent = getSelectedEvent();
@@ -131,8 +124,8 @@ export default function AgendaPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="card-dashboard">
-          <div className="bg-black/40 p-6 rounded-lg border border-flota-secondary/20">
+        <div className="card-dashboard h-full">
+          <div className="bg-black/40 p-6 rounded-lg border border-flota-secondary/20 h-full flex items-center justify-center">
             <Calendar
               mode="single"
               selected={selectedDate}
@@ -157,22 +150,7 @@ export default function AgendaPage() {
                 day: { position: "relative" }
               }}
               components={{
-                DayContent: ({ date, ...props }: DayContentProps) => {
-                  const events = getEventsByDate(date);
-                  return (
-                    <div>
-                      <div>{date.getDate()}</div>
-                      {events.length > 0 && (
-                        <div className={`absolute h-2 w-2 ${
-                          events[0].estado === "completado" ? "bg-green-500" :
-                          events[0].estado === "pendiente" ? "bg-flota-primary" :
-                          events[0].estado === "vencido" ? "bg-flota-danger" :
-                          "bg-amber-500"
-                        } rounded-full bottom-0.5 left-1/2 -ml-1`} />
-                      )}
-                    </div>
-                  );
-                }
+                DayContent: CustomDayContent
               }}
             />
           </div>
@@ -201,7 +179,7 @@ export default function AgendaPage() {
         </div>
         
         {/* Panel de edición de acción */}
-        <div className="card-dashboard">
+        <div className="card-dashboard h-full">
           <h3 className="font-montserrat text-xl mb-4">Editar Acción</h3>
           {selectedAccion ? (
             <div className="space-y-4">

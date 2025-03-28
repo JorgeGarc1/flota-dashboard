@@ -11,7 +11,9 @@ import { StatCard } from "@/components/ui/stat-card";
 import { 
   gastosPorCategoria, 
   ingresosVsGastosMensuales, 
+  ingresosVsGastosSemanales, // Need to use this instead
   saldosTiempo,
+  saldosHistoricos, // Need to use this instead
   cuentasResumen,
   cuentasEspecificas
 } from "@/data/mock-data";
@@ -43,30 +45,16 @@ export default function FinancieroPage() {
     { dataKey: "saldo", name: "Saldo", color: "#FF9900" },
   ];
 
-  // Columnas para la tabla de resumen de cuentas
-  const cuentasColumns = [
-    { header: "Cuenta", accessor: "cuenta" },
-    { 
-      header: "Ingresos", 
-      accessor: "ingresos",
-      cell: (value: number) => formatPesos(value)
-    },
-    { 
-      header: "Gastos", 
-      accessor: "gastos",
-      cell: (value: number) => formatPesos(value)
-    },
-    { 
-      header: "Saldo", 
-      accessor: "saldo",
-      cell: (value: number) => (
-        <span className="font-medium text-flota-primary">{formatPesos(value)}</span>
-      )
-    },
+  // Crear cuentas específicas actualizadas con las categorías solicitadas
+  const cuentasActualizadas = [
+    { nombre: "Mantenimiento", saldo: 125000, presupuesto: 150000 },
+    { nombre: "Combustible", saldo: 85000, presupuesto: 100000 },
+    { nombre: "Casetas", saldo: 45000, presupuesto: 50000 },
+    { nombre: "No Deducibles", saldo: 32000, presupuesto: 25000 }
   ];
 
   // Calcular saldo total
-  const saldoTotal = cuentasResumen.reduce((total, cuenta) => total + cuenta.saldo, 0);
+  const saldoTotal = cuentasActualizadas.reduce((total, cuenta) => total + cuenta.saldo, 0);
 
   // Paginación de datos
   const paginateData = (data: any[]) => {
@@ -85,8 +73,8 @@ export default function FinancieroPage() {
       />
 
       {/* Indicadores financieros específicos */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        {cuentasEspecificas.map((cuenta) => (
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
+        {cuentasActualizadas.map((cuenta) => (
           <StatCard
             key={cuenta.nombre}
             title={cuenta.nombre}
@@ -109,18 +97,18 @@ export default function FinancieroPage() {
           formatValue={formatPesos}
         />
         <BarChart 
-          data={ingresosVsGastosMensuales} 
-          title="Ingresos vs Gastos Mensuales"
+          data={ingresosVsGastosSemanales} 
+          title="Ingresos vs Gastos Semanales"
           bars={barChartBars}
-          xAxisDataKey="mes"
+          xAxisDataKey="semana"
           formatValue={formatPesos}
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <LineChart 
-          data={saldosTiempo} 
-          title="Saldos a lo Largo del Tiempo"
+          data={saldosHistoricos} 
+          title="Saldos Históricos"
           lines={lineChartLines}
           xAxisDataKey="fecha"
           formatValue={formatPesos}
@@ -131,11 +119,10 @@ export default function FinancieroPage() {
             <table className="w-full text-left">
               <thead className="text-flota-text bg-black/40 border-b border-flota-secondary/20">
                 <tr>
-                  {cuentasColumns.map((column) => (
-                    <th key={column.accessor} className="px-4 py-3 font-montserrat">
-                      {column.header}
-                    </th>
-                  ))}
+                  <th className="px-4 py-3 font-montserrat">Cuenta</th>
+                  <th className="px-4 py-3 font-montserrat">Ingresos</th>
+                  <th className="px-4 py-3 font-montserrat">Gastos</th>
+                  <th className="px-4 py-3 font-montserrat">Saldo</th>
                 </tr>
               </thead>
               <tbody>
@@ -144,13 +131,12 @@ export default function FinancieroPage() {
                     key={rowIndex} 
                     className="border-b border-flota-secondary/10 hover:bg-black/30"
                   >
-                    {cuentasColumns.map((column) => (
-                      <td key={column.accessor} className="px-4 py-3">
-                        {column.cell 
-                          ? column.cell(row[column.accessor as keyof typeof row]) 
-                          : row[column.accessor as keyof typeof row]}
-                      </td>
-                    ))}
+                    <td className="px-4 py-3">{row.cuenta}</td>
+                    <td className="px-4 py-3">{formatPesos(row.ingresos)}</td>
+                    <td className="px-4 py-3">{formatPesos(row.gastos)}</td>
+                    <td className="px-4 py-3">
+                      <span className="font-medium text-flota-primary">{formatPesos(row.saldo)}</span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -233,14 +219,14 @@ export default function FinancieroPage() {
           Ver Datos de Gastos
         </Button>
         <Button 
-          onClick={() => handleShowData(ingresosVsGastosMensuales, "Datos de Ingresos vs Gastos")}
+          onClick={() => handleShowData(ingresosVsGastosSemanales, "Datos de Ingresos vs Gastos Semanales")}
           variant="outline"
           className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
         >
           Ver Datos de Ingresos/Gastos
         </Button>
         <Button 
-          onClick={() => handleShowData(saldosTiempo, "Datos de Saldos a lo Largo del Tiempo")}
+          onClick={() => handleShowData(saldosHistoricos, "Datos de Saldos Históricos")}
           variant="outline"
           className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
         >

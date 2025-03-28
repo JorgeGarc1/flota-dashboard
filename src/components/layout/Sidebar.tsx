@@ -38,7 +38,7 @@ export default function Sidebar() {
       icon: ChartBar,
     },
     {
-      name: 'Acciones Ejecutivas',
+      name: 'Acciones',
       path: '/acciones',
       icon: FileText,
     },
@@ -60,7 +60,7 @@ export default function Sidebar() {
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col bg-sidebar border-r border-flota-secondary/20 transition-all duration-300 ease-in-out',
+          'fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col bg-[#111111] border-r border-flota-secondary/20 transition-all duration-300 ease-in-out',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20'
         )}
       >

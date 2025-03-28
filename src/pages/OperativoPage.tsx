@@ -1,8 +1,8 @@
+
 import { useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import LineChart from "@/components/charts/LineChart";
 import { StatCard } from "@/components/ui/stat-card";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
@@ -27,6 +27,7 @@ export default function OperativoPage() {
   const [dialogData, setDialogData] = useState<any[]>([]);
   const [dialogTitle, setDialogTitle] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isDestinationsDialogOpen, setIsDestinationsDialogOpen] = useState(false);
   const itemsPerPage = 5;
 
   const handleShowData = (data: any[], title: string) => {
@@ -142,6 +143,37 @@ export default function OperativoPage() {
     },
   ];
 
+  // Datos de ejemplo para los destinos
+  const destinosData = [
+    { destino: "Cliente #1234", tiempoDescarga: "01:45", entregas: 3 },
+    { destino: "Cliente #2568", tiempoDescarga: "00:55", entregas: 1 },
+    { destino: "Cliente #7890", tiempoDescarga: "02:15", entregas: 5 },
+    { destino: "Cliente #4532", tiempoDescarga: "01:20", entregas: 2 },
+    { destino: "Cliente #9876", tiempoDescarga: "03:00", entregas: 4 },
+    { destino: "Cliente #5421", tiempoDescarga: "00:45", entregas: 1 },
+  ];
+
+  // Columnas para la tabla de destinos
+  interface DestinosColumn {
+    header: string;
+    accessor: keyof typeof destinosData[0];
+    cell?: (value: any) => React.ReactNode;
+  }
+
+  const destinosColumns: DestinosColumn[] = [
+    { header: "Destino (ID Cliente)", accessor: "destino" },
+    { header: "Tiempo de Descarga", accessor: "tiempoDescarga" },
+    { 
+      header: "# Entregas", 
+      accessor: "entregas",
+      cell: (value: number) => value.toString()
+    }
+  ];
+
+  const handleShowDestinations = () => {
+    setIsDestinationsDialogOpen(true);
+  };
+
   // Paginación de datos
   const paginateData = (data: any[]) => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -158,59 +190,50 @@ export default function OperativoPage() {
         subtitle="Métricas de operación de la flota"
       />
 
-      {/* KPIs con barras de progreso */}
+      {/* KPIs sin barras de progreso */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <StatCard 
           title="Asistencias"
           value={kpisOperativos.asistencias}
           reference={`Meta: ${asistenciasEsperadas} asistencias`}
           description={`${porcentajeAsistencias}% de asistencias efectivas`}
-          icon={<AlertTriangle size={32} />}
-          className="relative pb-8"
-        >
-          <div className="absolute bottom-4 left-4 right-4">
-            <Progress value={porcentajeAsistencias} className="h-2" />
-          </div>
-        </StatCard>
+          icon={<div className="flex justify-center"><AlertTriangle size={32} /></div>}
+        />
         
         <StatCard 
           title="Kilómetros Totales"
           value={kpisOperativos.kilometros.toLocaleString("es-MX")}
           reference={`Meta: ${metaKilometros.toLocaleString("es-MX")} km`}
           description={`${porcentajeKilometros}% de la meta semanal`}
-          icon={<Truck size={32} />}
-          className="relative pb-8"
-        >
-          <div className="absolute bottom-4 left-4 right-4">
-            <Progress value={porcentajeKilometros} className="h-2" />
-          </div>
-        </StatCard>
+          icon={<div className="flex justify-center"><Truck size={32} /></div>}
+        />
         
         <StatCard 
           title="Litros de Combustible"
           value={kpisOperativos.combustible.toLocaleString("es-MX")}
           reference={`Presupuesto: ${kpisOperativos.combustiblePresupuestado.toLocaleString("es-MX")} litros`}
           description={`${porcentajeCombustible}% del presupuesto utilizado`}
-          icon={<Fuel size={32} />}
-          className="relative pb-8"
-        >
-          <div className="absolute bottom-4 left-4 right-4">
-            <Progress value={porcentajeCombustible} className="h-2" />
-          </div>
-        </StatCard>
+          icon={<div className="flex justify-center"><Fuel size={32} /></div>}
+        />
         
         <StatCard 
           title="Nivel de Servicio"
           value={`${nivelServicio}%`}
           reference={`${kpisOperativos.pedidosEntregados}/${kpisOperativos.pedidosProgramados} pedidos`}
           description="Pedidos entregados vs programados"
-          icon={<PackageCheck size={32} />}
-          className="relative pb-8"
+          icon={<div className="flex justify-center"><PackageCheck size={32} /></div>}
+        />
+      </div>
+
+      {/* Botón para abrir el modal de destinos */}
+      <div className="mb-6">
+        <Button 
+          onClick={handleShowDestinations}
+          variant="outline"
+          className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
         >
-          <div className="absolute bottom-4 left-4 right-4">
-            <Progress value={nivelServicio} className="h-2" />
-          </div>
-        </StatCard>
+          Ver Datos de Destinos
+        </Button>
       </div>
 
       {/* Tabla de vehículos */}
@@ -282,7 +305,7 @@ export default function OperativoPage() {
         />
       </div>
 
-      {/* Drill down modal */}
+      {/* Modal de datos generales */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="bg-flota-background border-flota-secondary/20 text-flota-text max-w-4xl">
           <DialogHeader>
@@ -315,6 +338,44 @@ export default function OperativoPage() {
                             : value as React.ReactNode}
                         </td>
                       )
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de destinos */}
+      <Dialog open={isDestinationsDialogOpen} onOpenChange={setIsDestinationsDialogOpen}>
+        <DialogContent className="bg-flota-background border-flota-secondary/20 text-flota-text max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-montserrat">Datos de Destinos</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="text-flota-text bg-black/40 border-b border-flota-secondary/20">
+                <tr>
+                  {destinosColumns.map((column) => (
+                    <th key={column.accessor} className="px-4 py-3 font-montserrat">
+                      {column.header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {destinosData.map((row, rowIndex) => (
+                  <tr 
+                    key={rowIndex} 
+                    className="border-b border-flota-secondary/10 hover:bg-black/30"
+                  >
+                    {destinosColumns.map((column) => (
+                      <td key={column.accessor} className="px-4 py-3">
+                        {column.cell 
+                          ? column.cell(row[column.accessor]) 
+                          : row[column.accessor]}
+                      </td>
                     ))}
                   </tr>
                 ))}
