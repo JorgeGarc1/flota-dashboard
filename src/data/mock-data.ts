@@ -1,3 +1,4 @@
+
 // Datos de muestra para la visualización financiera
 export const gastosPorCategoria = [
   { name: "Combustible", value: 45000, color: "#FF9900" },
@@ -5,6 +6,7 @@ export const gastosPorCategoria = [
   { name: "Salarios", value: 35000, color: "#DB0000" },
   { name: "Seguros", value: 15000, color: "#444444" },
   { name: "Otros", value: 7000, color: "#222222" },
+  { name: "No Deducibles", value: 18000, color: "#666666" },
 ];
 
 export const ingresosVsGastosMensuales = [
@@ -16,6 +18,18 @@ export const ingresosVsGastosMensuales = [
   { mes: "Jun", ingresos: 150000, gastos: 113000 },
 ];
 
+// Datos por semana para la visualización financiera
+export const ingresosVsGastosSemanales = [
+  { semana: "Sem 1", ingresos: 32000, gastos: 26000 },
+  { semana: "Sem 2", ingresos: 35000, gastos: 28000 },
+  { semana: "Sem 3", ingresos: 38000, gastos: 29000 },
+  { semana: "Sem 4", ingresos: 36000, gastos: 27000 },
+  { semana: "Sem 5", ingresos: 40000, gastos: 30000 },
+  { semana: "Sem 6", ingresos: 37000, gastos: 28000 },
+  { semana: "Sem 7", ingresos: 42000, gastos: 32000 },
+  { semana: "Sem 8", ingresos: 39000, gastos: 29000 },
+];
+
 export const saldosTiempo = [
   { fecha: "Ene", saldo: 25000 },
   { fecha: "Feb", saldo: 55000 },
@@ -23,6 +37,18 @@ export const saldosTiempo = [
   { fecha: "Abr", saldo: 115000 },
   { fecha: "May", saldo: 146000 },
   { fecha: "Jun", saldo: 183000 },
+];
+
+// Datos históricos semanales para la visualización de saldos
+export const saldosHistoricos = [
+  { fecha: "Sem 1", saldo: 6000 },
+  { fecha: "Sem 2", saldo: 13000 },
+  { fecha: "Sem 3", saldo: 22000 },
+  { fecha: "Sem 4", saldo: 30000 },
+  { fecha: "Sem 5", saldo: 41000 },
+  { fecha: "Sem 6", saldo: 50000 },
+  { fecha: "Sem 7", saldo: 62000 },
+  { fecha: "Sem 8", saldo: 75000 },
 ];
 
 export const cuentasResumen = [
@@ -173,6 +199,15 @@ export const vehiculosData = [
     polizaSeguro: "Vigente",
     costoMantenimiento: 4.3
   },
+];
+
+// Datos de muestra para destinos
+export const destinosData = [
+  { destino: "Cliente A", tiempoDescarga: "01:45", numEntregas: 12 },
+  { destino: "Cliente B", tiempoDescarga: "02:30", numEntregas: 8 },
+  { destino: "Cliente C", tiempoDescarga: "01:15", numEntregas: 15 },
+  { destino: "Cliente D", tiempoDescarga: "03:00", numEntregas: 6 },
+  { destino: "Cliente E", tiempoDescarga: "00:45", numEntregas: 20 },
 ];
 
 // Datos de muestra para acciones ejecutivas

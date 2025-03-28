@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import DoughnutChart from "@/components/charts/DoughnutChart";
@@ -10,10 +9,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { StatCard } from "@/components/ui/stat-card";
 import { 
   gastosPorCategoria, 
-  ingresosVsGastosMensuales, 
-  ingresosVsGastosSemanales, // Need to use this instead
+  ingresosVsGastosMensuales,
+  ingresosVsGastosSemanales,
   saldosTiempo,
-  saldosHistoricos, // Need to use this instead
+  saldosHistoricos,
   cuentasResumen,
   cuentasEspecificas
 } from "@/data/mock-data";
