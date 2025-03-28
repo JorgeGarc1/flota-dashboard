@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
@@ -13,7 +12,7 @@ import { eventosCalendario, accionesEjecutivas } from "@/data/mock-data";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { DayContent } from "react-day-picker";
+import { DayContent, DayContentProps } from "react-day-picker";
 
 export default function AgendaPage() {
   const [searchParams] = useSearchParams();
@@ -158,11 +157,11 @@ export default function AgendaPage() {
                 day: { position: "relative" }
               }}
               components={{
-                DayContent: ({ date, ...props }) => {
+                DayContent: ({ date, ...props }: DayContentProps) => {
                   const events = getEventsByDate(date);
                   return (
                     <div>
-                      {props.displayMonth && props.displayText}
+                      <div>{date.getDate()}</div>
                       {events.length > 0 && (
                         <div className={`absolute h-2 w-2 ${
                           events[0].estado === "completado" ? "bg-green-500" :

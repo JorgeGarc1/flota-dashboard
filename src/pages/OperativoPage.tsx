@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import LineChart from "@/components/charts/LineChart";
@@ -56,45 +55,83 @@ export default function OperativoPage() {
   
   const nivelServicio = Math.round((kpisOperativos.pedidosEntregados / kpisOperativos.pedidosProgramados) * 100);
 
-  // Configuración de columnas para la tabla de vehículos
+  // Configuration for vehicle table columns with proper typing
+  type VehiculoData = typeof vehiculosData[0];
+  
   const vehiculosColumns = [
-    { header: "Número Eco", accessor: "numeroEco" },
-    { header: "Estatus", accessor: "estatus", cell: (value: string) => {
-      const getStatusColor = (status: string) => {
-        switch(status) {
-          case "Taller": return "bg-yellow-600 text-white";
-          case "Ruta": return "bg-green-600 text-white";
-          case "Disponible": return "bg-blue-600 text-white";
-          case "Retorno": return "bg-purple-600 text-white";
-          case "En rampa": return "bg-orange-600 text-white";
-          case "CEDIS": return "bg-indigo-600 text-white";
-          case "Sin operador": return "bg-red-600 text-white";
-          default: return "bg-gray-600 text-white";
-        }
-      };
-      return (
-        <span className={cn("px-2 py-1 rounded text-xs font-medium", getStatusColor(value))}>
-          {value}
-        </span>
-      );
-    }},
-    { header: "Kilómetros", accessor: "kilometrosAcumulados", cell: (value: number) => value.toLocaleString("es-MX") },
-    { header: "Operador", accessor: "operadorAsignado" },
-    { header: "Nivel Servicio", accessor: "nivelServicio", cell: (value: number) => `${value}%` },
-    { header: "Rendimiento (km/lt)", accessor: "rendimientoPromedio", cell: (value: number) => value.toFixed(2) },
-    { header: "Incidencias", accessor: "incidencias" },
-    { header: "Saldo Casetas", accessor: "saldoCasetas", cell: (value: number) => `$${value.toLocaleString("es-MX")}` },
-    { header: "KM para Servicio", accessor: "kmParaServicio", cell: (value: number) => value.toLocaleString("es-MX") },
-    { header: "Costo por KM", accessor: "costoPorKm", cell: (value: number) => `$${value.toFixed(2)}` },
-    { header: "Costo Mantenimiento", accessor: "costoMantenimiento", cell: (value: number) => `$${value.toFixed(2)}` },
-    { header: "Póliza Seguro", accessor: "polizaSeguro", cell: (value: string) => {
-      const isActive = value === "Vigente";
-      return (
-        <span className={cn("px-2 py-1 rounded text-xs font-medium", isActive ? "bg-green-600 text-white" : "bg-red-600 text-white")}>
-          {value}
-        </span>
-      );
-    }},
+    { header: "Número Eco", accessor: "numeroEco" as keyof VehiculoData },
+    { 
+      header: "Estatus", 
+      accessor: "estatus" as keyof VehiculoData, 
+      cell: (value: string) => {
+        const getStatusColor = (status: string) => {
+          switch(status) {
+            case "Taller": return "bg-yellow-600 text-white";
+            case "Ruta": return "bg-green-600 text-white";
+            case "Disponible": return "bg-blue-600 text-white";
+            case "Retorno": return "bg-purple-600 text-white";
+            case "En rampa": return "bg-orange-600 text-white";
+            case "CEDIS": return "bg-indigo-600 text-white";
+            case "Sin operador": return "bg-red-600 text-white";
+            default: return "bg-gray-600 text-white";
+          }
+        };
+        return (
+          <span className={cn("px-2 py-1 rounded text-xs font-medium", getStatusColor(value))}>
+            {value}
+          </span>
+        );
+      }
+    },
+    { 
+      header: "Kilómetros", 
+      accessor: "kilometrosAcumulados" as keyof VehiculoData, 
+      cell: (value: number) => value.toLocaleString("es-MX") 
+    },
+    { header: "Operador", accessor: "operadorAsignado" as keyof VehiculoData },
+    { 
+      header: "Nivel Servicio", 
+      accessor: "nivelServicio" as keyof VehiculoData, 
+      cell: (value: number) => `${value}%` 
+    },
+    { 
+      header: "Rendimiento (km/lt)", 
+      accessor: "rendimientoPromedio" as keyof VehiculoData, 
+      cell: (value: number) => value.toFixed(2) 
+    },
+    { header: "Incidencias", accessor: "incidencias" as keyof VehiculoData },
+    { 
+      header: "Saldo Casetas", 
+      accessor: "saldoCasetas" as keyof VehiculoData, 
+      cell: (value: number) => `$${value.toLocaleString("es-MX")}` 
+    },
+    { 
+      header: "KM para Servicio", 
+      accessor: "kmParaServicio" as keyof VehiculoData, 
+      cell: (value: number) => value.toLocaleString("es-MX") 
+    },
+    { 
+      header: "Costo por KM", 
+      accessor: "costoPorKm" as keyof VehiculoData, 
+      cell: (value: number) => `$${value.toFixed(2)}` 
+    },
+    { 
+      header: "Costo Mantenimiento", 
+      accessor: "costoMantenimiento" as keyof VehiculoData, 
+      cell: (value: number) => `$${value.toFixed(2)}` 
+    },
+    { 
+      header: "Póliza Seguro", 
+      accessor: "polizaSeguro" as keyof VehiculoData, 
+      cell: (value: string) => {
+        const isActive = value === "Vigente";
+        return (
+          <span className={cn("px-2 py-1 rounded text-xs font-medium", isActive ? "bg-green-600 text-white" : "bg-red-600 text-white")}>
+            {value}
+          </span>
+        );
+      }
+    },
   ];
 
   // Paginación de datos
