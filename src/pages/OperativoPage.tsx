@@ -58,11 +58,19 @@ export default function OperativoPage() {
   // Configuration for vehicle table columns with proper typing
   type VehiculoData = typeof vehiculosData[0];
   
-  const vehiculosColumns = [
-    { header: "Número Eco", accessor: "numeroEco" as keyof VehiculoData },
+  // Create a properly typed interface for our column structure
+  interface TableColumn {
+    header: string;
+    accessor: keyof VehiculoData;
+    cell?: (value: any, row?: VehiculoData) => React.ReactNode;
+  }
+  
+  // Now define the columns with the proper typing
+  const vehiculosColumns: TableColumn[] = [
+    { header: "Número Eco", accessor: "numeroEco" },
     { 
       header: "Estatus", 
-      accessor: "estatus" as keyof VehiculoData, 
+      accessor: "estatus", 
       cell: (value: string) => {
         const getStatusColor = (status: string) => {
           switch(status) {
@@ -85,44 +93,44 @@ export default function OperativoPage() {
     },
     { 
       header: "Kilómetros", 
-      accessor: "kilometrosAcumulados" as keyof VehiculoData, 
+      accessor: "kilometrosAcumulados", 
       cell: (value: number) => value.toLocaleString("es-MX") 
     },
-    { header: "Operador", accessor: "operadorAsignado" as keyof VehiculoData },
+    { header: "Operador", accessor: "operadorAsignado" },
     { 
       header: "Nivel Servicio", 
-      accessor: "nivelServicio" as keyof VehiculoData, 
+      accessor: "nivelServicio", 
       cell: (value: number) => `${value}%` 
     },
     { 
       header: "Rendimiento (km/lt)", 
-      accessor: "rendimientoPromedio" as keyof VehiculoData, 
+      accessor: "rendimientoPromedio", 
       cell: (value: number) => value.toFixed(2) 
     },
-    { header: "Incidencias", accessor: "incidencias" as keyof VehiculoData },
+    { header: "Incidencias", accessor: "incidencias" },
     { 
       header: "Saldo Casetas", 
-      accessor: "saldoCasetas" as keyof VehiculoData, 
+      accessor: "saldoCasetas", 
       cell: (value: number) => `$${value.toLocaleString("es-MX")}` 
     },
     { 
       header: "KM para Servicio", 
-      accessor: "kmParaServicio" as keyof VehiculoData, 
+      accessor: "kmParaServicio", 
       cell: (value: number) => value.toLocaleString("es-MX") 
     },
     { 
       header: "Costo por KM", 
-      accessor: "costoPorKm" as keyof VehiculoData, 
+      accessor: "costoPorKm", 
       cell: (value: number) => `$${value.toFixed(2)}` 
     },
     { 
       header: "Costo Mantenimiento", 
-      accessor: "costoMantenimiento" as keyof VehiculoData, 
+      accessor: "costoMantenimiento", 
       cell: (value: number) => `$${value.toFixed(2)}` 
     },
     { 
       header: "Póliza Seguro", 
-      accessor: "polizaSeguro" as keyof VehiculoData, 
+      accessor: "polizaSeguro", 
       cell: (value: string) => {
         const isActive = value === "Vigente";
         return (
@@ -213,7 +221,7 @@ export default function OperativoPage() {
             <TableHeader>
               <TableRow className="bg-black/40 border-b border-flota-secondary/20">
                 {vehiculosColumns.map((column) => (
-                  <TableHead key={column.accessor} className="text-flota-text font-montserrat">
+                  <TableHead key={column.accessor as string} className="text-flota-text font-montserrat">
                     {column.header}
                   </TableHead>
                 ))}
@@ -223,10 +231,10 @@ export default function OperativoPage() {
               {paginateData(vehiculosData).map((vehiculo, index) => (
                 <TableRow key={index} className="border-b border-flota-secondary/10 hover:bg-black/30">
                   {vehiculosColumns.map((column) => (
-                    <TableCell key={column.accessor}>
+                    <TableCell key={column.accessor as string}>
                       {column.cell 
-                        ? column.cell(vehiculo[column.accessor as keyof typeof vehiculo]) 
-                        : vehiculo[column.accessor as keyof typeof vehiculo]}
+                        ? column.cell(vehiculo[column.accessor], vehiculo) 
+                        : vehiculo[column.accessor]}
                     </TableCell>
                   ))}
                 </TableRow>
