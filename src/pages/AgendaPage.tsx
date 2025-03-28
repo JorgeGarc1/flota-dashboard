@@ -13,6 +13,7 @@ import { eventosCalendario, accionesEjecutivas } from "@/data/mock-data";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { DayContent } from "react-day-picker";
 
 export default function AgendaPage() {
   const [searchParams] = useSearchParams();
@@ -157,11 +158,11 @@ export default function AgendaPage() {
                 day: { position: "relative" }
               }}
               components={{
-                DayContent: (props) => {
-                  const events = getEventsByDate(props.date);
+                DayContent: ({ date, ...props }) => {
+                  const events = getEventsByDate(date);
                   return (
                     <div>
-                      {props.children}
+                      {props.displayMonth && props.displayText}
                       {events.length > 0 && (
                         <div className={`absolute h-2 w-2 ${
                           events[0].estado === "completado" ? "bg-green-500" :

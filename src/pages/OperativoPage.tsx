@@ -21,6 +21,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { DataTable } from "@/components/ui/data-table";
 
 export default function OperativoPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
