@@ -1,13 +1,15 @@
 
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { ChartBar, ChartPie, CalendarCheck, FileText, Menu, X } from 'lucide-react';
+import { ChartBar, ChartPie, CalendarCheck, FileText, Menu, X, LogOut } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from 'sonner';
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
 
   // Estado inicial del sidebar basado en dispositivo
@@ -18,6 +20,11 @@ export default function Sidebar() {
   });
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+  
+  const handleLogout = () => {
+    toast.success("Sesión cerrada correctamente");
+    navigate("/login");
+  };
 
   const navItems = [
     {
@@ -58,11 +65,19 @@ export default function Sidebar() {
         )}
       >
         <div className="flex h-20 items-center justify-center border-b border-flota-secondary/20 p-4">
-          <img 
-            src="/lovable-uploads/b8d080d2-83b9-40dc-a38d-f1c6a0e4d2a0.png" 
-            alt="Teseo Logo" 
-            className={cn("h-12 transition-all", !isOpen && "lg:h-10")} 
-          />
+          {isOpen ? (
+            <img 
+              src="/lovable-uploads/699389bf-72ee-4c06-a8ad-44be8453eab3.png" 
+              alt="Teseo Logo" 
+              className="h-12 transition-all" 
+            />
+          ) : (
+            <img 
+              src="/lovable-uploads/651e8b35-6fec-4a23-abf8-67f0c2816cc5.png" 
+              alt="Teseo Logo Icon" 
+              className="h-10 transition-all" 
+            />
+          )}
         </div>
 
         <div className="flex-grow p-4">
@@ -89,7 +104,17 @@ export default function Sidebar() {
 
         <div className="border-t border-flota-secondary/20 p-4">
           <button
-            className="hidden lg:flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full text-flota-text hover:bg-black/50"
+            className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full text-flota-text hover:bg-black/50"
+            onClick={handleLogout}
+          >
+            <LogOut className="h-5 w-5 text-flota-danger" />
+            <span className={cn('transition-opacity', !isOpen && 'lg:hidden')}>
+              Cerrar sesión
+            </span>
+          </button>
+          
+          <button
+            className="hidden lg:flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full text-flota-text hover:bg-black/50 mt-4"
             onClick={toggleSidebar}
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

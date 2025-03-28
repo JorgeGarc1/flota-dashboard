@@ -12,7 +12,6 @@ import {
   vehiculosData
 } from "@/data/mock-data";
 import { AlertTriangle, Truck, Fuel, PackageCheck } from "lucide-react";
-import { DataTable } from "@/components/ui/data-table";
 import { 
   Table, 
   TableBody, 
@@ -27,6 +26,8 @@ export default function OperativoPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogData, setDialogData] = useState<any[]>([]);
   const [dialogTitle, setDialogTitle] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const handleShowData = (data: any[], title: string) => {
     setDialogData(data);
@@ -84,6 +85,7 @@ export default function OperativoPage() {
     { header: "Saldo Casetas", accessor: "saldoCasetas", cell: (value: number) => `$${value.toLocaleString("es-MX")}` },
     { header: "KM para Servicio", accessor: "kmParaServicio", cell: (value: number) => value.toLocaleString("es-MX") },
     { header: "Costo por KM", accessor: "costoPorKm", cell: (value: number) => `$${value.toFixed(2)}` },
+    { header: "Costo Mantenimiento", accessor: "costoMantenimiento", cell: (value: number) => `$${value.toFixed(2)}` },
     { header: "Póliza Seguro", accessor: "polizaSeguro", cell: (value: string) => {
       const isActive = value === "Vigente";
       return (
@@ -93,6 +95,15 @@ export default function OperativoPage() {
       );
     }},
   ];
+
+  // Paginación de datos
+  const paginateData = (data: any[]) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(vehiculosData.length / itemsPerPage);
 
   return (
     <div>
@@ -105,7 +116,8 @@ export default function OperativoPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <StatCard 
           title="Asistencias"
-          value={`${kpisOperativos.asistencias}/${asistenciasEsperadas}`}
+          value={kpisOperativos.asistencias}
+          reference={`Meta: ${asistenciasEsperadas} asistencias`}
           description={`${porcentajeAsistencias}% de asistencias efectivas`}
           icon={<AlertTriangle size={32} />}
           className="relative pb-8"
@@ -117,7 +129,8 @@ export default function OperativoPage() {
         
         <StatCard 
           title="Kilómetros Totales"
-          value={`${kpisOperativos.kilometros.toLocaleString("es-MX")}/${metaKilometros.toLocaleString("es-MX")}`}
+          value={kpisOperativos.kilometros.toLocaleString("es-MX")}
+          reference={`Meta: ${metaKilometros.toLocaleString("es-MX")} km`}
           description={`${porcentajeKilometros}% de la meta semanal`}
           icon={<Truck size={32} />}
           className="relative pb-8"
@@ -129,7 +142,8 @@ export default function OperativoPage() {
         
         <StatCard 
           title="Litros de Combustible"
-          value={`${kpisOperativos.combustible.toLocaleString("es-MX")}/${kpisOperativos.combustiblePresupuestado.toLocaleString("es-MX")}`}
+          value={kpisOperativos.combustible.toLocaleString("es-MX")}
+          reference={`Presupuesto: ${kpisOperativos.combustiblePresupuestado.toLocaleString("es-MX")} litros`}
           description={`${porcentajeCombustible}% del presupuesto utilizado`}
           icon={<Fuel size={32} />}
           className="relative pb-8"
@@ -142,7 +156,8 @@ export default function OperativoPage() {
         <StatCard 
           title="Nivel de Servicio"
           value={`${nivelServicio}%`}
-          description={`${kpisOperativos.pedidosEntregados}/${kpisOperativos.pedidosProgramados} pedidos entregados`}
+          reference={`${kpisOperativos.pedidosEntregados}/${kpisOperativos.pedidosProgramados} pedidos`}
+          description="Pedidos entregados vs programados"
           icon={<PackageCheck size={32} />}
           className="relative pb-8"
         >
@@ -167,12 +182,12 @@ export default function OperativoPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {vehiculosData.map((vehiculo, index) => (
+              {paginateData(vehiculosData).map((vehiculo, index) => (
                 <TableRow key={index} className="border-b border-flota-secondary/10 hover:bg-black/30">
                   {vehiculosColumns.map((column) => (
                     <TableCell key={column.accessor}>
                       {column.cell 
-                        ? column.cell(vehiculo[column.accessor as keyof typeof vehiculo], vehiculo) 
+                        ? column.cell(vehiculo[column.accessor as keyof typeof vehiculo]) 
                         : vehiculo[column.accessor as keyof typeof vehiculo]}
                     </TableCell>
                   ))}
@@ -181,6 +196,33 @@ export default function OperativoPage() {
             </TableBody>
           </Table>
         </div>
+        
+        {/* Paginador */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center mt-4 space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
+            >
+              Anterior
+            </Button>
+            <span className="text-sm text-flota-text">
+              Página {currentPage} de {totalPages}
+            </span>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
+            >
+              Siguiente
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Gráfico de líneas */}

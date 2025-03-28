@@ -31,6 +31,13 @@ export const cuentasResumen = [
   { cuenta: "Cuenta Inversiones", ingresos: 50000, gastos: 10000, saldo: 40000 },
 ];
 
+// Nuevos datos de cuentas específicas con presupuestos
+export const cuentasEspecificas = [
+  { nombre: "Cuenta de Mantenimiento", saldo: 45000, presupuesto: 60000 },
+  { nombre: "Cuenta de Combustible", saldo: 78000, presupuesto: 100000 },
+  { nombre: "Cuenta de Casetas", saldo: 32000, presupuesto: 50000 },
+];
+
 // Datos de muestra para la visualización operativa
 export const viajesPorCliente = [
   { name: "Cliente A", value: 120, color: "#FF9900" },
@@ -79,7 +86,8 @@ export const vehiculosData = [
     saldoCasetas: 1580,
     kmParaServicio: 4320,
     costoPorKm: 8.5,
-    polizaSeguro: "Vigente"
+    polizaSeguro: "Vigente",
+    costoMantenimiento: 4.2
   },
   {
     numeroEco: "FL002",
@@ -92,7 +100,8 @@ export const vehiculosData = [
     saldoCasetas: 980,
     kmParaServicio: 1250,
     costoPorKm: 9.2,
-    polizaSeguro: "Vigente"
+    polizaSeguro: "Vigente",
+    costoMantenimiento: 5.1
   },
   {
     numeroEco: "FL003",
@@ -105,7 +114,8 @@ export const vehiculosData = [
     saldoCasetas: 2100,
     kmParaServicio: 5500,
     costoPorKm: 7.8,
-    polizaSeguro: "Vigente"
+    polizaSeguro: "Vigente",
+    costoMantenimiento: 3.8
   },
   {
     numeroEco: "FL004",
@@ -118,7 +128,8 @@ export const vehiculosData = [
     saldoCasetas: 950,
     kmParaServicio: 9800,
     costoPorKm: 8.9,
-    polizaSeguro: "Vigente"
+    polizaSeguro: "Vigente",
+    costoMantenimiento: 4.5
   },
   {
     numeroEco: "FL005",
@@ -131,7 +142,8 @@ export const vehiculosData = [
     saldoCasetas: 1450,
     kmParaServicio: 3200,
     costoPorKm: 9.5,
-    polizaSeguro: "Vencida"
+    polizaSeguro: "Vencida",
+    costoMantenimiento: 5.8
   },
   {
     numeroEco: "FL006",
@@ -144,7 +156,8 @@ export const vehiculosData = [
     saldoCasetas: 1800,
     kmParaServicio: 7500,
     costoPorKm: 8.2,
-    polizaSeguro: "Vigente"
+    polizaSeguro: "Vigente",
+    costoMantenimiento: 4.0
   },
   {
     numeroEco: "FL007",
@@ -157,7 +170,8 @@ export const vehiculosData = [
     saldoCasetas: 1250,
     kmParaServicio: 6300,
     costoPorKm: 8.7,
-    polizaSeguro: "Vigente"
+    polizaSeguro: "Vigente",
+    costoMantenimiento: 4.3
   },
 ];
 
