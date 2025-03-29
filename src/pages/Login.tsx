@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,27 +12,81 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulamos un login exitoso después de 1 segundo
-    setTimeout(() => {
-      toast.success('Inicio de sesión exitoso');
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data.user) {
+        toast.success('Inicio de sesión exitoso');
+        navigate('/dashboard/financiero');
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Error al iniciar sesión');
+    } finally {
       setIsLoading(false);
-      navigate('/dashboard/financiero');
-    }, 1000);
+    }
   };
 
-  const handleSocialLogin = (provider: string) => {
+  const handleSignUp = async () => {
+    if (!email || !password) {
+      toast.error('Por favor ingresa email y contraseña');
+      return;
+    }
+
     setIsLoading(true);
     
-    // Simulamos un login exitoso después de 1 segundo
-    setTimeout(() => {
-      toast.success(`Inicio de sesión con ${provider} exitoso`);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            nombre: email.split('@')[0],
+            apellido: '',
+          },
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success('Registro exitoso. Por favor verifica tu correo electrónico.');
+    } catch (error: any) {
+      toast.error(error.message || 'Error al registrarse');
+    } finally {
       setIsLoading(false);
-      navigate('/dashboard/financiero');
-    }, 1000);
+    }
+  };
+
+  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/dashboard/financiero`,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+    } catch (error: any) {
+      toast.error(error.message || `Error al iniciar sesión con ${provider}`);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -81,13 +136,24 @@ export default function LoginPage() {
               />
             </div>
             
-            <Button 
-              type="submit" 
-              className="w-full bg-flota-primary hover:bg-flota-primary/90 text-black font-bold"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Cargando...' : 'Iniciar Sesión'}
-            </Button>
+            <div className="flex gap-3">
+              <Button 
+                type="submit" 
+                className="flex-1 bg-flota-primary hover:bg-flota-primary/90 text-black font-bold"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Cargando...' : 'Iniciar Sesión'}
+              </Button>
+              
+              <Button 
+                type="button"
+                onClick={handleSignUp}
+                className="flex-1 bg-flota-secondary hover:bg-flota-secondary/90 text-white font-bold"
+                disabled={isLoading}
+              >
+                Registrarse
+              </Button>
+            </div>
           </form>
           
           <div className="mt-6">
@@ -106,7 +172,7 @@ export default function LoginPage() {
               <Button 
                 type="button" 
                 variant="outline" 
-                onClick={() => handleSocialLogin('Google')}
+                onClick={() => handleSocialLogin('google')}
                 className="bg-black/60 border-flota-secondary/30 text-flota-text hover:bg-black/80"
                 disabled={isLoading}
               >
@@ -133,7 +199,7 @@ export default function LoginPage() {
               <Button 
                 type="button" 
                 variant="outline" 
-                onClick={() => handleSocialLogin('Facebook')}
+                onClick={() => handleSocialLogin('facebook')}
                 className="bg-black/60 border-flota-secondary/30 text-flota-text hover:bg-black/80"
                 disabled={isLoading}
               >

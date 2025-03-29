@@ -5,12 +5,14 @@ import { cn } from '@/lib/utils';
 import { ChartBar, ChartPie, CalendarCheck, FileText, Menu, X, LogOut } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { signOut } = useAuth();
 
   // Estado inicial del sidebar basado en dispositivo
   useState(() => {
@@ -21,9 +23,13 @@ export default function Sidebar() {
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   
-  const handleLogout = () => {
-    toast.success("Sesión cerrada correctamente");
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast.success("Sesión cerrada correctamente");
+    } catch (error) {
+      toast.error("Error al cerrar sesión");
+    }
   };
 
   const navItems = [
