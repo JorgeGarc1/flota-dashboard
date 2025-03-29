@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -147,7 +146,7 @@ export default function LoginPage() {
               
               <Button 
                 type="button"
-                onClick={handleSignUp}
+                onClick={() => navigate('/register')}
                 className="flex-1 bg-flota-secondary hover:bg-flota-secondary/90 text-white font-bold"
                 disabled={isLoading}
               >

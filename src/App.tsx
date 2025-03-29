@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import AppLayout from "./components/layout/AppLayout";
 import LoginPage from "./pages/Login";
+import RegisterPage from "./pages/Register";
 import FinancieroPage from "./pages/FinancieroPage";
 import OperativoPage from "./pages/OperativoPage";
 import AccionesPage from "./pages/AccionesPage";
@@ -26,6 +27,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             
             <Route element={
               <ProtectedRoute>
