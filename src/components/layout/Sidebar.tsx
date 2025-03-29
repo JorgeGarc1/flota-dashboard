@@ -70,7 +70,7 @@ export default function Sidebar() {
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20'
         )}
       >
-        <div className="flex h-20 items-center justify-center border-b border-flota-secondary/20 p-4">
+        <div className="flex h-20 items-center justify-center border-b border-flota-secondary/20 p-4 bg-black">
           {isOpen ? (
             <img 
               src="/lovable-uploads/699389bf-72ee-4c06-a8ad-44be8453eab3.png" 
