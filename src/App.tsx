@@ -1,4 +1,5 @@
 
+import * as React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,7 +16,6 @@ import OperativoPage from "./pages/OperativoPage";
 import AccionesPage from "./pages/AccionesPage";
 import AgendaPage from "./pages/AgendaPage";
 import NotFound from "./pages/NotFound";
-import * as React from 'react';
 
 // Create a client
 const queryClient = new QueryClient();
