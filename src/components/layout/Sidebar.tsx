@@ -39,7 +39,7 @@ export default function Sidebar() {
       icon: ChartPie,
     },
     {
-      name: 'Eficiencia Operativa',
+      name: 'Dashboard Operativo',
       path: '/dashboard/operativo',
       icon: ChartBar,
     },
