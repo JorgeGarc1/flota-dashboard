@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import LineChart from "@/components/charts/LineChart";
@@ -36,13 +35,29 @@ export default function OperativoPage() {
     setIsDialogOpen(true);
   };
 
-  // Configuración para el gráfico de líneas
-  const lineChartLines = [
-    { dataKey: "viajes", name: "Viajes", color: "#FF9900" },
+  // Crear datos combinados para el gráfico dual
+  const combinedChartData = viajesDiarios.map((item, index) => {
+    // Calcular kilometraje acumulado semanal (simulado)
+    // En un caso real, esto vendría de la base de datos
+    const kilometrosAcumulados = Math.floor(Math.random() * 5000) + 15000;
+    
+    return {
+      ...item,
+      kilometrosAcumulados
+    };
+  });
+
+  // Configuración para el gráfico de líneas dual
+  const dualAxisLines = [
+    { dataKey: "viajes", name: "Viajes Diarios", color: "#FF9900", yAxisId: "left" },
+    { dataKey: "kilometrosAcumulados", name: "Kilómetros Acumulados", color: "#36A2EB", yAxisId: "right" }
   ];
 
   // Formateo para viajes (sin $ porque no son valores monetarios)
   const formatViajes = (value: number) => value.toString();
+  
+  // Formateo para kilómetros
+  const formatKilometros = (value: number) => `${value.toLocaleString("es-MX")} km`;
 
   // Calcular métricas de KPIs
   const totalCamiones = vehiculosData.length;
@@ -294,14 +309,16 @@ export default function OperativoPage() {
         )}
       </div>
 
-      {/* Gráfico de líneas */}
+      {/* Gráfico de líneas con doble eje */}
       <div className="mb-6">
         <LineChart 
-          data={viajesDiarios} 
-          title="Viajes Diarios por Semana"
-          lines={lineChartLines}
+          data={combinedChartData} 
+          title="Viajes Diarios y Kilómetros Acumulados por Semana"
+          lines={dualAxisLines}
           xAxisDataKey="dia"
           formatValue={formatViajes}
+          formatSecondaryValue={formatKilometros}
+          showSecondaryAxis={true}
         />
       </div>
 

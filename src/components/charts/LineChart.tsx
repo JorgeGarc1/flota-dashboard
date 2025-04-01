@@ -19,9 +19,12 @@ type LineChartProps = {
     dataKey: string;
     name: string;
     color: string;
+    yAxisId?: string;
   }[];
   xAxisDataKey: string;
   formatValue?: (value: number) => string;
+  formatSecondaryValue?: (value: number) => string;
+  showSecondaryAxis?: boolean;
 };
 
 export default function LineChart({
@@ -31,6 +34,8 @@ export default function LineChart({
   lines,
   xAxisDataKey,
   formatValue = (value) => `$${value.toLocaleString("es-MX")}`,
+  formatSecondaryValue = (value) => `${value.toLocaleString("es-MX")}`,
+  showSecondaryAxis = false,
 }: LineChartProps) {
   return (
     <div className={cn("card-dashboard flex flex-col h-full", className)}>
@@ -48,9 +53,32 @@ export default function LineChart({
           >
             <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
             <XAxis dataKey={xAxisDataKey} />
-            <YAxis tickFormatter={formatValue} />
-            <Tooltip formatter={(value: number) => [formatValue(value), 'Valor']} />
+            
+            {/* Primary Y-axis (left) */}
+            <YAxis 
+              yAxisId="left" 
+              tickFormatter={formatValue} 
+              orientation="left"
+            />
+            
+            {/* Secondary Y-axis (right) - only shown if enabled */}
+            {showSecondaryAxis && (
+              <YAxis 
+                yAxisId="right" 
+                tickFormatter={formatSecondaryValue} 
+                orientation="right"
+              />
+            )}
+            
+            <Tooltip 
+              formatter={(value: number, name: string, props: { dataKey: string, payload: any }) => {
+                const lineConfig = lines.find(line => line.dataKey === props.dataKey);
+                const formatter = lineConfig?.yAxisId === "right" ? formatSecondaryValue : formatValue;
+                return [formatter(value), name];
+              }} 
+            />
             <Legend />
+            
             {lines.map((line) => (
               <Line
                 key={line.dataKey}
@@ -59,6 +87,7 @@ export default function LineChart({
                 name={line.name}
                 stroke={line.color}
                 activeDot={{ r: 8 }}
+                yAxisId={line.yAxisId || "left"}
               />
             ))}
           </RechartsLineChart>
