@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { ChartBar, ChartPie, CalendarCheck, FileText, Menu, X, LogOut } from 'lucide-react';
@@ -14,12 +14,12 @@ export default function Sidebar() {
   const isMobile = useIsMobile();
   const { signOut } = useAuth();
 
-  // Estado inicial del sidebar basado en dispositivo
-  useState(() => {
+  // Initialize sidebar based on device
+  useEffect(() => {
     if (isMobile) {
       setIsOpen(false);
     }
-  });
+  }, [isMobile]);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   
