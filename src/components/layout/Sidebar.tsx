@@ -6,6 +6,7 @@ import { ChartBar, ChartPie, CalendarCheck, FileText, Menu, X, LogOut } from 'lu
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
@@ -13,6 +14,7 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { signOut } = useAuth();
+  const { theme } = useTheme();
 
   // Initialize sidebar based on device
   useEffect(() => {
@@ -58,7 +60,12 @@ export default function Sidebar() {
   return (
     <>
       <button
-        className="fixed left-4 top-4 z-50 rounded-full bg-flota-primary p-2 text-black shadow-md lg:hidden"
+        className={cn(
+          "fixed left-4 bottom-4 z-50 rounded-full p-2 shadow-md lg:hidden",
+          theme === 'dark' 
+            ? "bg-flota-primary text-black" 
+            : "bg-white text-gray-800 border border-gray-200"
+        )}
         onClick={toggleSidebar}
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -66,11 +73,19 @@ export default function Sidebar() {
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col bg-[#111111] border-r border-flota-secondary/20 transition-all duration-300 ease-in-out',
+          'fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col transition-all duration-300 ease-in-out border-r',
+          theme === 'dark' 
+            ? 'bg-[#111111] border-flota-secondary/20' 
+            : 'bg-white border-gray-200',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20'
         )}
       >
-        <div className="flex h-20 items-center justify-center border-b border-flota-secondary/20 p-4 bg-black">
+        <div className={cn(
+          "flex h-20 items-center justify-center border-b p-4",
+          theme === 'dark' 
+            ? "border-flota-secondary/20 bg-black" 
+            : "border-gray-200 bg-gray-50"
+        )}>
           {isOpen ? (
             <img 
               src="/lovable-uploads/699389bf-72ee-4c06-a8ad-44be8453eab3.png" 
@@ -95,11 +110,20 @@ export default function Sidebar() {
                 className={cn(
                   'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors',
                   location.pathname === item.path
-                    ? 'bg-flota-primary text-black font-semibold'
-                    : 'text-flota-text hover:bg-black/50'
+                    ? theme === 'dark' 
+                      ? 'bg-flota-primary text-black font-semibold' 
+                      : 'bg-amber-100 text-amber-900 font-semibold'
+                    : theme === 'dark' 
+                      ? 'text-flota-text hover:bg-black/50' 
+                      : 'text-gray-700 hover:bg-gray-100'
                 )}
               >
-                <item.icon className="h-5 w-5" />
+                <item.icon className={cn(
+                  "h-5 w-5",
+                  location.pathname === item.path
+                    ? theme === 'dark' ? 'text-black' : 'text-amber-900'
+                    : theme === 'dark' ? 'text-flota-text' : 'text-gray-700'
+                )} />
                 <span className={cn('transition-opacity', !isOpen && 'lg:hidden')}>
                   {item.name}
                 </span>
@@ -108,19 +132,35 @@ export default function Sidebar() {
           </nav>
         </div>
 
-        <div className="border-t border-flota-secondary/20 p-4">
+        <div className={cn(
+          "border-t p-4",
+          theme === 'dark' ? "border-flota-secondary/20" : "border-gray-200"
+        )}>
           <button
-            className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full text-flota-text hover:bg-black/50"
+            className={cn(
+              "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full",
+              theme === 'dark' 
+                ? "text-flota-text hover:bg-black/50" 
+                : "text-gray-700 hover:bg-gray-100"
+            )}
             onClick={handleLogout}
           >
-            <LogOut className="h-5 w-5 text-flota-danger" />
+            <LogOut className={cn(
+              "h-5 w-5", 
+              theme === 'dark' ? "text-flota-danger" : "text-red-600"
+            )} />
             <span className={cn('transition-opacity', !isOpen && 'lg:hidden')}>
               Cerrar sesión
             </span>
           </button>
           
           <button
-            className="hidden lg:flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full text-flota-text hover:bg-black/50 mt-4"
+            className={cn(
+              "hidden lg:flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full mt-4",
+              theme === 'dark' 
+                ? "text-flota-text hover:bg-black/50" 
+                : "text-gray-700 hover:bg-gray-100"
+            )}
             onClick={toggleSidebar}
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

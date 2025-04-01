@@ -7,6 +7,7 @@
 
 @layer base {
   :root {
+    /* Variables para el tema oscuro */
     --background: 0 0% 7%;
     --foreground: 0 0% 100%;
 
@@ -46,6 +47,46 @@
     --sidebar-border: 0 0% 15%;
     --sidebar-ring: 37 100% 50%;
   }
+
+  .light {
+    /* Variables para el tema claro */
+    --background: 0 0% 97%;
+    --foreground: 0 0% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    --primary: 36 100% 50%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 204 7% 65%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 204 7% 85%;
+    --muted-foreground: 0 0% 30%;
+
+    --accent: 0 85% 43%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 85% 43%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 204 7% 80%;
+    --input: 204 7% 80%;
+    --ring: 36 100% 50%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 36 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 95%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 36 100% 50%;
+  }
 }
 
 @layer base {
@@ -53,8 +94,12 @@
     @apply border-border;
   }
 
-  body {
+  .dark body {
     @apply bg-flota-background text-flota-text font-roboto;
+  }
+
+  .light body {
+    @apply bg-[#f7f7f7] text-gray-800 font-roboto;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -63,14 +108,35 @@
 }
 
 /* Estilos personalizados */
-.card-dashboard {
+.dark .card-dashboard {
   @apply rounded-lg border border-flota-secondary/20 bg-black/40 p-5 shadow-md;
 }
 
-.card-stat {
+.light .card-dashboard {
+  @apply rounded-lg border border-gray-200 bg-white p-5 shadow-sm;
+}
+
+.dark .card-stat {
   @apply rounded-lg border border-flota-secondary/20 bg-black/40 p-4 flex flex-col items-center justify-center shadow-md transition-all;
+}
+
+.light .card-stat {
+  @apply rounded-lg border border-gray-200 bg-white p-4 flex flex-col items-center justify-center shadow-sm transition-all;
 }
 
 .format-number {
   font-variant-numeric: tabular-nums;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
