@@ -14,38 +14,42 @@ import OperativoPage from "./pages/OperativoPage";
 import AccionesPage from "./pages/AccionesPage";
 import AgendaPage from "./pages/AgendaPage";
 import NotFound from "./pages/NotFound";
+import React from 'react';
 
+// Create a client
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            
-            <Route element={
-              <ProtectedRoute>
-                <AppLayout />
-              </ProtectedRoute>
-            }>
-              <Route path="/dashboard/financiero" element={<FinancieroPage />} />
-              <Route path="/dashboard/operativo" element={<OperativoPage />} />
-              <Route path="/acciones" element={<AccionesPage />} />
-              <Route path="/agenda" element={<AgendaPage />} />
-            </Route>
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              
+              <Route element={
+                <ProtectedRoute>
+                  <AppLayout />
+                </ProtectedRoute>
+              }>
+                <Route path="/dashboard/financiero" element={<FinancieroPage />} />
+                <Route path="/dashboard/operativo" element={<OperativoPage />} />
+                <Route path="/acciones" element={<AccionesPage />} />
+                <Route path="/agenda" element={<AgendaPage />} />
+              </Route>
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
