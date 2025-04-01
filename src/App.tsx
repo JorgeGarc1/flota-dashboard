@@ -14,7 +14,7 @@ import OperativoPage from "./pages/OperativoPage";
 import AccionesPage from "./pages/AccionesPage";
 import AgendaPage from "./pages/AgendaPage";
 import NotFound from "./pages/NotFound";
-import React from 'react';
+import * as React from 'react';
 
 // Create a client
 const queryClient = new QueryClient();
