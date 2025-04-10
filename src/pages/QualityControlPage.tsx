@@ -346,7 +346,7 @@ export default function QualityControlPage() {
                 xAxisDataKey="period"
                 formatValue={(value) => `${value}`}
                 bars={[
-                  { dataKey: 'count', name: 'Incidencias', color: '#FF6384' },
+                  { dataKey: 'count', name: 'Incidencias', color: '#14A552' },
                 ]}
               />
             </div>
@@ -461,7 +461,7 @@ export default function QualityControlPage() {
                     xAxisDataKey="type"
                     formatValue={(value) => `${value}`}
                     bars={[
-                      { dataKey: 'count', name: 'Cantidad', color: '#FF6384' },
+                      { dataKey: 'count', name: 'Cantidad', color: '#14A552' },
                     ]}
                   />
                 </div>
