@@ -13,6 +13,7 @@ import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import FinancieroPage from "./pages/FinancieroPage";
 import OperativoPage from "./pages/OperativoPage";
+import QualityControlPage from "./pages/QualityControlPage";
 import AccionesPage from "./pages/AccionesPage";
 import AgendaPage from "./pages/AgendaPage";
 import NotFound from "./pages/NotFound";
@@ -41,6 +42,7 @@ function App() {
                 }>
                   <Route path="/dashboard/financiero" element={<FinancieroPage />} />
                   <Route path="/dashboard/operativo" element={<OperativoPage />} />
+                  <Route path="/dashboard/calidad" element={<QualityControlPage />} />
                   <Route path="/acciones" element={<AccionesPage />} />
                   <Route path="/agenda" element={<AgendaPage />} />
                 </Route>

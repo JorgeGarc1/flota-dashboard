@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { ChartBar, ChartPie, CalendarCheck, FileText, Menu, X, LogOut } from 'lucide-react';
+import { ChartBar, ChartPie, CalendarCheck, FileText, Menu, X, LogOut, Thermometer } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -44,6 +44,11 @@ export default function Sidebar() {
       name: 'Dashboard Operativo',
       path: '/dashboard/operativo',
       icon: ChartBar,
+    },
+    {
+      name: 'Control de Calidad',
+      path: '/dashboard/calidad',
+      icon: Thermometer,
     },
     {
       name: 'Acciones',
