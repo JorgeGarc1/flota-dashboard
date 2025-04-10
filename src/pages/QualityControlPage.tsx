@@ -37,7 +37,7 @@ const generateMockData = () => {
     name: `Vehículo ${i + 1}`,
     type: faker.helpers.arrayElement(['Refrigerado', 'Congelado', 'Mixto']),
     status: faker.helpers.arrayElement(['Óptimo', 'Advertencia', 'Alerta']),
-    currentTemp: faker.number.float({ min: 1.5, max: 5.5, precision: 0.1 }),
+    currentTemp: faker.number.float({ min: 1.5, max: 5.5, fractionDigits: 1 }),
     targetTemp: faker.helpers.arrayElement([2, 3, 4]),
     location: {
       lat: faker.location.latitude({ min: 19.2, max: 19.6 }),
@@ -54,9 +54,9 @@ const generateMockData = () => {
     return {
       time: hour.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
       datetime: hour.toISOString(),
-      avgTemp: faker.number.float({ min: 2, max: 4.5, precision: 0.1 }),
-      minTemp: faker.number.float({ min: 1.5, max: 2.5, precision: 0.1 }),
-      maxTemp: faker.number.float({ min: 3.5, max: 5, precision: 0.1 }),
+      avgTemp: faker.number.float({ min: 2, max: 4.5, fractionDigits: 1 }),
+      minTemp: faker.number.float({ min: 1.5, max: 2.5, fractionDigits: 1 }),
+      maxTemp: faker.number.float({ min: 3.5, max: 5, fractionDigits: 1 }),
     };
   });
 
@@ -75,7 +75,7 @@ const generateMockData = () => {
     vehicleName: vehicles[Math.floor(Math.random() * vehicles.length)].name,
     type: faker.helpers.arrayElement(alertTypes),
     severity: faker.helpers.arrayElement(['low', 'medium', 'high']),
-    value: faker.number.float({ min: 1, max: 7, precision: 0.1 }),
+    value: faker.number.float({ min: 1, max: 7, fractionDigits: 1 }),
     timestamp: faker.date.recent({ days: 1 }).toISOString(),
     status: faker.helpers.arrayElement(['Nueva', 'En revisión', 'Resuelta']),
     location: {
@@ -93,8 +93,8 @@ const generateMockData = () => {
     deliveriesBelow4C: faker.number.int({ min: 180, max: 220 }),
     alertCount: alerts.length,
     timeOutOfRange: faker.number.int({ min: 15, max: 60 }), // minutes
-    deliveriesWithoutIncidents: faker.number.float({ min: 85, max: 98, precision: 0.1 }), // percentage
-    averageTemperature: faker.number.float({ min: 2.5, max: 4.2, precision: 0.1 }),
+    deliveriesWithoutIncidents: faker.number.float({ min: 85, max: 98, fractionDigits: 1 }), // percentage
+    averageTemperature: faker.number.float({ min: 2.5, max: 4.2, fractionDigits: 1 }),
   };
 
   // Alerts by zone
