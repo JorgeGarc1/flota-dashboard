@@ -49,24 +49,24 @@
   }
 
   .light {
-    /* Variables para el tema claro */
-    --background: 0 0% 97%;
-    --foreground: 0 0% 10%;
+    /* Variables para el tema claro usando los colores requeridos */
+    --background: 0 0% 100%; /* #FFFFFF */
+    --foreground: 0 0% 7%; /* #111111 */
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 0 0% 7%; /* #111111 */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 0 0% 7%; /* #111111 */
 
     --primary: 36 100% 50%;
     --primary-foreground: 0 0% 0%;
 
-    --secondary: 204 7% 65%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 213 6% 47%; /* #6F797F */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 204 7% 85%;
-    --muted-foreground: 0 0% 10%;  /* Changed from 30% to 10% for darker text */
+    --muted: 217 9% 83%; /* #CED1D8 */
+    --muted-foreground: 0 0% 7%;  /* #111111 */
 
     --accent: 0 85% 43%;
     --accent-foreground: 0 0% 100%;
@@ -74,16 +74,16 @@
     --destructive: 0 85% 43%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 204 7% 80%;
-    --input: 204 7% 80%;
+    --border: 217 9% 83%; /* #CED1D8 */
+    --input: 217 9% 83%; /* #CED1D8 */
     --ring: 36 100% 50%;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 10%;
+    --sidebar-foreground: 0 0% 7%; /* #111111 */
     --sidebar-primary: 36 100% 50%;
     --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 0 0% 95%;
-    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 7%; /* #111111 */
     --sidebar-border: 0 0% 90%;
     --sidebar-ring: 36 100% 50%;
   }
@@ -99,15 +99,15 @@
   }
 
   .light body {
-    @apply bg-[#f7f7f7] text-gray-800 font-roboto;
+    @apply bg-[#FFFFFF] text-[#111111] font-roboto;
   }
 
   .light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
-    @apply font-montserrat font-semibold text-gray-900;
+    @apply font-montserrat font-semibold text-[#111111];
   }
 
   .light p, .light span, .light div {
-    @apply text-gray-800;
+    @apply text-[#111111];
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -121,7 +121,7 @@
 }
 
 .light .card-dashboard {
-  @apply rounded-lg border border-gray-200 bg-white p-5 shadow-sm;
+  @apply rounded-lg border border-[#CED1D8] bg-white p-5 shadow-sm;
 }
 
 .dark .card-stat {
@@ -129,7 +129,16 @@
 }
 
 .light .card-stat {
-  @apply rounded-lg border border-gray-200 bg-white p-4 flex flex-col items-center justify-center shadow-sm transition-all;
+  @apply rounded-lg border border-[#CED1D8] bg-white p-4 flex flex-col items-center justify-center shadow-sm transition-all;
+}
+
+/* Bloques y Cajas para tema claro según especificación */
+.light .block {
+  @apply bg-[#6F797F];
+}
+
+.light .box {
+  @apply bg-[#CED1D8];
 }
 
 .format-number {

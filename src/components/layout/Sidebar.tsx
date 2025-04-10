@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { ChartBar, ChartPie, CalendarCheck, FileText, Menu, X, LogOut, Thermometer } from 'lucide-react';
+import { ChartBar, ChartPie, CalendarCheck, FileText, Menu, X, LogOut, Thermometer, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -78,11 +78,11 @@ export default function Sidebar() {
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col transition-all duration-300 ease-in-out border-r',
+          'fixed inset-y-0 left-0 z-40 flex h-full flex-col transition-all duration-300 ease-in-out border-r',
           theme === 'dark' 
             ? 'bg-[#111111] border-flota-secondary/20' 
             : 'bg-white border-gray-200',
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20'
+          isOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0 lg:w-20'
         )}
       >
         <div className={cn(
@@ -159,19 +159,24 @@ export default function Sidebar() {
             </span>
           </button>
           
+          {/* Collapse/Expand Button */}
           <button
             className={cn(
-              "hidden lg:flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full mt-4",
+              "flex items-center justify-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full mt-4",
               theme === 'dark' 
                 ? "text-flota-text hover:bg-black/50" 
                 : "text-gray-700 hover:bg-gray-100"
             )}
             onClick={toggleSidebar}
           >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            <span className={cn('transition-opacity', !isOpen && 'lg:hidden')}>
-              Colapsar menú
-            </span>
+            {isOpen ? (
+              <>
+                <ChevronLeft className="h-5 w-5" />
+                <span>Colapsar menú</span>
+              </>
+            ) : (
+              <ChevronRight className="h-5 w-5" />
+            )}
           </button>
         </div>
       </aside>

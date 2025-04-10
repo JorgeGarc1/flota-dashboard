@@ -22,15 +22,26 @@ import {
   FilterIcon,
   Calendar,
   AlertOctagon,
+  Building,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import QualityMap from "@/components/quality/QualityMap";
 import TemperatureGauge from "@/components/quality/TemperatureGauge";
 import AlertsList from "@/components/quality/AlertsList";
 import { faker } from '@faker-js/faker';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+// Define available CEDIS
+const cedisList = [
+  { id: "all", name: "Todos" },
+  { id: "cedis1", name: "CEDIS Norte" },
+  { id: "cedis2", name: "CEDIS Sur" },
+  { id: "cedis3", name: "CEDIS Centro" },
+  { id: "cedis4", name: "CEDIS Oeste" },
+];
 
 // Generate mock data
-const generateMockData = () => {
+const generateMockData = (cedisFilter = "all") => {
   // Vehicles data
   const vehicles = Array.from({ length: 15 }, (_, i) => ({
     id: `V-${1000 + i}`,
@@ -39,12 +50,18 @@ const generateMockData = () => {
     status: faker.helpers.arrayElement(['Óptimo', 'Advertencia', 'Alerta']),
     currentTemp: faker.number.float({ min: 1.5, max: 5.5, fractionDigits: 1 }),
     targetTemp: faker.helpers.arrayElement([2, 3, 4]),
+    cedis: faker.helpers.arrayElement(cedisList.filter(c => c.id !== "all")).id,
     location: {
       lat: faker.location.latitude({ min: 19.2, max: 19.6 }),
       lng: faker.location.longitude({ min: -99.4, max: -99.0 }),
     },
     lastUpdate: faker.date.recent({ days: 1 }).toISOString(),
   }));
+
+  // Filter vehicles by CEDIS if needed
+  const filteredVehicles = cedisFilter !== "all" 
+    ? vehicles.filter(v => v.cedis === cedisFilter) 
+    : vehicles;
 
   // Temperature timeline data (for the last 24 hours)
   const temperatureTimeline = Array.from({ length: 24 }, (_, i) => {
@@ -71,13 +88,14 @@ const generateMockData = () => {
   
   const alerts = Array.from({ length: 12 }, (_, i) => ({
     id: `A-${1000 + i}`,
-    vehicleId: vehicles[Math.floor(Math.random() * vehicles.length)].id,
-    vehicleName: vehicles[Math.floor(Math.random() * vehicles.length)].name,
+    vehicleId: filteredVehicles[Math.floor(Math.random() * filteredVehicles.length)].id,
+    vehicleName: filteredVehicles[Math.floor(Math.random() * filteredVehicles.length)].name,
     type: faker.helpers.arrayElement(alertTypes),
     severity: faker.helpers.arrayElement(['low', 'medium', 'high']),
     value: faker.number.float({ min: 1, max: 7, fractionDigits: 1 }),
     timestamp: faker.date.recent({ days: 1 }).toISOString(),
     status: faker.helpers.arrayElement(['Nueva', 'En revisión', 'Resuelta']),
+    cedis: faker.helpers.arrayElement(cedisList.filter(c => c.id !== "all")).id,
     location: {
       zone: faker.helpers.arrayElement(['Norte', 'Sur', 'Este', 'Oeste', 'Centro']),
       address: faker.location.streetAddress({ useFullAddress: true }),
@@ -88,10 +106,15 @@ const generateMockData = () => {
     }
   }));
 
+  // Filter alerts by CEDIS if needed
+  const filteredAlerts = cedisFilter !== "all" 
+    ? alerts.filter(a => a.cedis === cedisFilter) 
+    : alerts;
+
   // KPIs
   const kpis = {
     deliveriesBelow4C: faker.number.int({ min: 180, max: 220 }),
-    alertCount: alerts.length,
+    deliveriesAbove4C: faker.number.int({ min: 10, max: 40 }),
     timeOutOfRange: faker.number.int({ min: 15, max: 60 }), // minutes
     deliveriesWithoutIncidents: faker.number.float({ min: 85, max: 98, fractionDigits: 1 }), // percentage
     averageTemperature: faker.number.float({ min: 2.5, max: 4.2, fractionDigits: 1 }),
@@ -112,21 +135,47 @@ const generateMockData = () => {
     count: faker.number.int({ min: 1, max: 10 })
   }));
 
+  // Generate incident histogram data
+  const incidentsByWeek = Array.from({ length: 4 }, (_, i) => ({
+    period: `Semana ${i + 1}`,
+    count: faker.number.int({ min: 5, max: 25 })
+  }));
+
+  const incidentsByMonth = Array.from({ length: 6 }, (_, i) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - 5 + i);
+    return {
+      period: date.toLocaleString('es-MX', { month: 'short' }),
+      count: faker.number.int({ min: 15, max: 80 })
+    };
+  });
+
   return {
-    vehicles,
+    vehicles: filteredVehicles,
     temperatureTimeline,
-    alerts,
+    alerts: filteredAlerts,
     kpis,
     alertsByZone,
-    alertsByType
+    alertsByType,
+    incidentsByWeek,
+    incidentsByMonth
   };
 };
 
 export default function QualityControlPage() {
   const { theme } = useTheme();
   const [timeFilter, setTimeFilter] = useState('24h');
-  const [mockData] = useState(generateMockData());
-  const { vehicles, temperatureTimeline, alerts, kpis, alertsByZone, alertsByType } = mockData;
+  const [histogramPeriod, setHistogramPeriod] = useState('week');
+  const [selectedCedis, setSelectedCedis] = useState("all");
+  const [mockData, setMockData] = useState(generateMockData());
+
+  // Handle CEDIS filter change
+  const handleCedisChange = (value: string) => {
+    setSelectedCedis(value);
+    setMockData(generateMockData(value));
+  };
+
+  const { vehicles, temperatureTimeline, alerts, kpis, alertsByZone, alertsByType, incidentsByWeek, incidentsByMonth } = mockData;
 
   // Filter alerts by severity for the count badges
   const highAlerts = alerts.filter(alert => alert.severity === 'high').length;
@@ -146,6 +195,9 @@ export default function QualityControlPage() {
     count: item.count
   }));
 
+  // Prepare histogram data based on selected period
+  const histogramData = histogramPeriod === 'week' ? incidentsByWeek : incidentsByMonth;
+
   return (
     <div>
       <PageHeader 
@@ -153,6 +205,18 @@ export default function QualityControlPage() {
         subtitle="Monitoreo en tiempo real de la cadena de frío y control de flota"
         actions={
           <div className="flex space-x-2">
+            <Select value={selectedCedis} onValueChange={handleCedisChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Seleccionar CEDIS" />
+              </SelectTrigger>
+              <SelectContent>
+                {cedisList.map(cedis => (
+                  <SelectItem key={cedis.id} value={cedis.id}>
+                    {cedis.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Button variant="outline" size="sm" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Hoy
@@ -187,15 +251,15 @@ export default function QualityControlPage() {
           <TooltipTrigger asChild>
             <div>
               <StatCard
-                title="Alertas Activas"
-                value={kpis.alertCount}
-                icon={<BellRing className="h-6 w-6" />}
+                title="Entregas > 4°C"
+                value={kpis.deliveriesAbove4C}
+                icon={<AlertTriangle className="h-6 w-6" />}
                 className="h-full"
               />
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Número total de alertas activas en el sistema</p>
+            <p>Número de pedidos entregados a más de 4°C (fuera de rango)</p>
           </TooltipContent>
         </Tooltip>
 
@@ -248,18 +312,44 @@ export default function QualityControlPage() {
         </Tooltip>
       </div>
 
-      {/* Main Content Area - Map and Graphs */}
+      {/* Main Content Area - Histogram and Gauges */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Map */}
+        {/* Histogram */}
         <Card className="lg:col-span-2 h-[400px]">
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-2 flex flex-row justify-between items-center">
             <CardTitle className="text-lg flex items-center gap-2">
-              <Map className="h-5 w-5" />
-              Monitoreo de Flota en Tiempo Real
+              <BarChartIcon className="h-5 w-5" />
+              Incidencias Reportadas por Clientes
             </CardTitle>
+            <div className="flex space-x-2">
+              <Button 
+                variant={histogramPeriod === 'week' ? "default" : "outline"} 
+                size="sm"
+                onClick={() => setHistogramPeriod('week')}
+              >
+                Semana
+              </Button>
+              <Button 
+                variant={histogramPeriod === 'month' ? "default" : "outline"} 
+                size="sm"
+                onClick={() => setHistogramPeriod('month')}
+              >
+                Mes
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
-            <QualityMap vehicles={vehicles} />
+            <div className="h-[320px]">
+              <BarChart
+                data={histogramData}
+                title=""
+                xAxisDataKey="period"
+                formatValue={(value) => `${value}`}
+                bars={[
+                  { dataKey: 'count', name: 'Incidencias', color: '#FF6384' },
+                ]}
+              />
+            </div>
           </CardContent>
         </Card>
 
