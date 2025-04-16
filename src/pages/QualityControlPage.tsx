@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageHeader from "@/components/layout/PageHeader";
 import { StatCard } from "@/components/ui/stat-card";
 import { Button } from "@/components/ui/button";
@@ -14,13 +14,30 @@ import {
   Building,
   FilterIcon,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Clock
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { faker } from '@faker-js/faker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import TemperatureGauge from "@/components/quality/TemperatureGauge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+
+// Time filter options
+const timeFilterOptions = [
+  { id: "today", name: "Hoy" },
+  { id: "week", name: "Semana" },
+  { id: "month", name: "Mes" },
+];
 
 // Define available CEDIS
 const cedisList = [
@@ -32,15 +49,27 @@ const cedisList = [
 ];
 
 // Generate mock data
-const generateMockData = (cedisFilter = "all") => {
+const generateMockData = (cedisFilter = "all", timeFilter = "today") => {
+  // Adjust the data range based on the time filter
+  const getDaysForTimeFilter = () => {
+    switch (timeFilter) {
+      case "today": return 1;
+      case "week": return 7;
+      case "month": return 30;
+      default: return 1;
+    }
+  };
+  
+  const daysRange = getDaysForTimeFilter();
+  
   // Vehicles data with incidents
-  const vehicles = Array.from({ length: 15 }, (_, i) => {
+  const vehicles = Array.from({ length: 15 + (daysRange > 1 ? daysRange : 0) }, (_, i) => {
     const vehicle = {
       id: `V-${1000 + i}`,
       numEco: `ECO-${1000 + i}`,
       type: faker.helpers.arrayElement(['Refrigerado', 'Congelado', 'Mixto']),
       status: faker.helpers.arrayElement(['Óptimo', 'Advertencia', 'Alerta']),
-      incidentCount: faker.number.int({ min: 0, max: 8 }),
+      incidentCount: faker.number.int({ min: 0, max: daysRange > 1 ? daysRange : 8 }),
       minTemp: faker.number.float({ min: 1.5, max: 5.0, fractionDigits: 1 }),
       maxTemp: faker.number.float({ min: 5.5, max: 10.5, fractionDigits: 1 }),
       avgTemp: faker.number.float({ min: 3.5, max: 7.0, fractionDigits: 1 }),
@@ -50,9 +79,12 @@ const generateMockData = (cedisFilter = "all") => {
     
     // Generate incidents for vehicles (only if there are incidents)
     if (vehicle.incidentCount > 0) {
+      // Generate incidents based on the time filter
+      const incidentDaysBack = Math.min(daysRange, 14);
+      
       vehicle.incidents = Array.from({ length: vehicle.incidentCount }, (_, j) => ({
         id: `INC-${i}-${j}`,
-        date: faker.date.recent({ days: 14 }).toLocaleDateString('es-MX'),
+        date: faker.date.recent({ days: incidentDaysBack }).toLocaleDateString('es-MX'),
         time: faker.date.recent().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
         temperature: faker.number.float({ min: 6.1, max: 10.5, fractionDigits: 1 }),
         location: faker.location.city(),
@@ -88,10 +120,11 @@ const generateMockData = (cedisFilter = "all") => {
     };
   });
 
-  // KPIs
+  // KPIs (adjusted based on time filter)
+  const multiplier = timeFilter === "today" ? 1 : timeFilter === "week" ? 7 : 30;
   const kpis = {
-    deliveriesBelow6C: faker.number.int({ min: 180, max: 220 }),
-    deliveriesAbove6C: faker.number.int({ min: 10, max: 40 }),
+    deliveriesBelow6C: faker.number.int({ min: 180, max: 220 }) * multiplier,
+    deliveriesAbove6C: faker.number.int({ min: 10, max: 40 }) * multiplier,
     averageTemperature: faker.number.float({ min: 2.5, max: 5.8, fractionDigits: 1 }),
   };
 
@@ -105,14 +138,26 @@ const generateMockData = (cedisFilter = "all") => {
 export default function QualityControlPage() {
   const { theme } = useTheme();
   const [selectedCedis, setSelectedCedis] = useState("all");
+  const [timeFilter, setTimeFilter] = useState("today");
   const [mockData, setMockData] = useState(generateMockData());
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const vehiclesPerPage = 6;
 
   // Handle CEDIS filter change
   const handleCedisChange = (value: string) => {
     setSelectedCedis(value);
-    setMockData(generateMockData(value));
+    setMockData(generateMockData(value, timeFilter));
     setExpandedRows({});
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
+  // Handle time period filter change
+  const handleTimeFilterChange = (value: string) => {
+    setTimeFilter(value);
+    setMockData(generateMockData(selectedCedis, value));
+    setExpandedRows({});
+    setCurrentPage(1); // Reset to first page when filter changes
   };
 
   // Toggle row expansion
@@ -125,6 +170,12 @@ export default function QualityControlPage() {
 
   const { vehicles, temperatureTimeline, kpis } = mockData;
 
+  // Pagination logic
+  const totalPages = Math.ceil(vehicles.length / vehiclesPerPage);
+  const indexOfLastVehicle = currentPage * vehiclesPerPage;
+  const indexOfFirstVehicle = indexOfLastVehicle - vehiclesPerPage;
+  const currentVehicles = vehicles.slice(indexOfFirstVehicle, indexOfLastVehicle);
+
   // Prepare data for charts
   const temperatureChartData = temperatureTimeline.map(data => ({
     time: data.time,
@@ -132,6 +183,21 @@ export default function QualityControlPage() {
     minTemp: data.minTemp,
     maxTemp: data.maxTemp,
   }));
+
+  // Generate pagination items
+  const paginationItems = [];
+  for (let i = 1; i <= totalPages; i++) {
+    paginationItems.push(
+      <PaginationItem key={i}>
+        <PaginationLink 
+          isActive={currentPage === i} 
+          onClick={() => setCurrentPage(i)}
+        >
+          {i}
+        </PaginationLink>
+      </PaginationItem>
+    );
+  }
 
   return (
     <div>
@@ -152,10 +218,27 @@ export default function QualityControlPage() {
                 ))}
               </SelectContent>
             </Select>
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Hoy
-            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  {timeFilterOptions.find(option => option.id === timeFilter)?.name || "Período"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {timeFilterOptions.map(option => (
+                  <DropdownMenuItem 
+                    key={option.id} 
+                    onClick={() => handleTimeFilterChange(option.id)}
+                    className={timeFilter === option.id ? "bg-accent" : ""}
+                  >
+                    {option.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <Button variant="outline" size="sm" className="flex items-center gap-2">
               <FilterIcon className="h-4 w-4" />
               Filtros
@@ -245,7 +328,7 @@ export default function QualityControlPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {vehicles.map((vehicle) => (
+                    {currentVehicles.map((vehicle) => (
                       <React.Fragment key={vehicle.id}>
                         <TableRow className={vehicle.incidentCount > 0 ? "cursor-pointer hover:bg-muted/70" : ""}>
                           <TableCell>
@@ -318,6 +401,31 @@ export default function QualityControlPage() {
                     ))}
                   </TableBody>
                 </Table>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-4">
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious 
+                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                            className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                          />
+                        </PaginationItem>
+                        
+                        {paginationItems}
+                        
+                        <PaginationItem>
+                          <PaginationNext 
+                            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                            className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
