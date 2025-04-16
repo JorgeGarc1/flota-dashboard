@@ -22,6 +22,7 @@ type BarChartProps = {
   }[];
   xAxisDataKey: string;
   formatValue?: (value: number) => string;
+  stacked?: boolean;
 };
 
 export default function BarChart({
@@ -31,6 +32,7 @@ export default function BarChart({
   bars,
   xAxisDataKey,
   formatValue = (value) => `$${value.toLocaleString("es-MX")}`,
+  stacked = false,
 }: BarChartProps) {
   return (
     <div className={cn("card-dashboard flex flex-col h-full", className)}>
@@ -57,6 +59,7 @@ export default function BarChart({
                 dataKey={bar.dataKey}
                 name={bar.name}
                 fill={bar.color}
+                stackId={stacked ? "a" : undefined}
               />
             ))}
           </RechartsBarChart>

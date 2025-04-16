@@ -1,5 +1,5 @@
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, Label } from "recharts";
 import { cn } from "@/lib/utils";
 
 type DoughnutChartProps = {
@@ -14,6 +14,7 @@ type DoughnutChartProps = {
   showLegend?: boolean;
   innerRadius?: number;
   outerRadius?: number;
+  showValues?: boolean;
 };
 
 export default function DoughnutChart({
@@ -24,7 +25,31 @@ export default function DoughnutChart({
   showLegend = true,
   innerRadius = 60,
   outerRadius = 80,
+  showValues = false,
 }: DoughnutChartProps) {
+  // Custom label for pie chart segments
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, value }: any) => {
+    if (!showValues) return null;
+    
+    const radius = innerRadius + (outerRadius - innerRadius) * 1.3;
+    const x = cx + radius * Math.cos(-midAngle * Math.PI / 180);
+    const y = cy + radius * Math.sin(-midAngle * Math.PI / 180);
+    
+    return (
+      <text 
+        x={x} 
+        y={y} 
+        fill={data[index].color}
+        textAnchor={x > cx ? 'start' : 'end'} 
+        dominantBaseline="central"
+        fontSize="12"
+        fontWeight="bold"
+      >
+        {formatValue(value)}
+      </text>
+    );
+  };
+
   return (
     <div className={cn("card-dashboard flex flex-col h-full", className)}>
       <h3 className="font-montserrat text-xl mb-4">{title}</h3>
@@ -35,7 +60,8 @@ export default function DoughnutChart({
               data={data}
               cx="50%"
               cy="50%"
-              labelLine={false}
+              labelLine={showValues}
+              label={renderCustomizedLabel}
               innerRadius={innerRadius}
               outerRadius={outerRadius}
               fill="#8884d8"

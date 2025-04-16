@@ -1,33 +1,22 @@
-
 // Datos de muestra para la visualización financiera
 export const gastosPorCategoria = [
   { name: "Combustible", value: 45000, color: "#FF9900" },
   { name: "Mantenimiento", value: 28000, color: "#6F797F" },
-  { name: "Salarios", value: 35000, color: "#DB0000" },
+  { name: "Imponderables", value: 18000, color: "#666666" },
   { name: "Seguros", value: 15000, color: "#444444" },
   { name: "Otros", value: 7000, color: "#222222" },
-  { name: "No Deducibles", value: 18000, color: "#666666" },
 ];
 
-export const ingresosVsGastosMensuales = [
-  { mes: "Ene", ingresos: 120000, gastos: 95000 },
-  { mes: "Feb", ingresos: 135000, gastos: 105000 },
-  { mes: "Mar", ingresos: 128000, gastos: 100000 },
-  { mes: "Abr", ingresos: 142000, gastos: 110000 },
-  { mes: "May", ingresos: 139000, gastos: 108000 },
-  { mes: "Jun", ingresos: 150000, gastos: 113000 },
-];
-
-// Datos por semana para la visualización financiera
+// Datos por semana para la visualización financiera - reestructurados para gráfico apilado
 export const ingresosVsGastosSemanales = [
-  { semana: "Sem 1", ingresos: 32000, gastos: 26000 },
-  { semana: "Sem 2", ingresos: 35000, gastos: 28000 },
-  { semana: "Sem 3", ingresos: 38000, gastos: 29000 },
-  { semana: "Sem 4", ingresos: 36000, gastos: 27000 },
-  { semana: "Sem 5", ingresos: 40000, gastos: 30000 },
-  { semana: "Sem 6", ingresos: 37000, gastos: 28000 },
-  { semana: "Sem 7", ingresos: 42000, gastos: 32000 },
-  { semana: "Sem 8", ingresos: 39000, gastos: 29000 },
+  { semana: "Sem 1", combustible: 12000, mantenimiento: 8000, seguros: 3000, imponderables: 3000 },
+  { semana: "Sem 2", combustible: 13000, mantenimiento: 8500, seguros: 3500, imponderables: 3000 },
+  { semana: "Sem 3", combustible: 14000, mantenimiento: 9000, seguros: 3000, imponderables: 3000 },
+  { semana: "Sem 4", combustible: 12500, mantenimiento: 8500, seguros: 3000, imponderables: 3000 },
+  { semana: "Sem 5", combustible: 15000, mantenimiento: 9500, seguros: 3000, imponderables: 2500 },
+  { semana: "Sem 6", combustible: 13500, mantenimiento: 8500, seguros: 3000, imponderables: 3000 },
+  { semana: "Sem 7", combustible: 16000, mantenimiento: 10000, seguros: 3000, imponderables: 3000 },
+  { semana: "Sem 8", combustible: 14000, mantenimiento: 9000, seguros: 3000, imponderables: 3000 },
 ];
 
 export const saldosTiempo = [

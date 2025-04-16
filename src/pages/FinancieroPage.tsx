@@ -1,11 +1,11 @@
+
 import { useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import DoughnutChart from "@/components/charts/DoughnutChart";
 import BarChart from "@/components/charts/BarChart";
 import LineChart from "@/components/charts/LineChart";
-import { DataTable } from "@/components/ui/data-table";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/ui/stat-card";
 import { 
   gastosPorCategoria, 
@@ -13,16 +13,12 @@ import {
   ingresosVsGastosSemanales,
   saldosTiempo,
   saldosHistoricos,
-  cuentasResumen,
-  cuentasEspecificas
 } from "@/data/mock-data";
 
 export default function FinancieroPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogData, setDialogData] = useState<any[]>([]);
   const [dialogTitle, setDialogTitle] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
 
   const handleShowData = (data: any[], title: string) => {
     setDialogData(data);
@@ -33,10 +29,12 @@ export default function FinancieroPage() {
   // Formatear para mostrar en pesos mexicanos
   const formatPesos = (value: number) => `$${value.toLocaleString("es-MX")}`;
 
-  // Configuración para el gráfico de barras
-  const barChartBars = [
-    { dataKey: "ingresos", name: "Ingresos", color: "#FF9900" },
-    { dataKey: "gastos", name: "Gastos", color: "#DB0000" },
+  // Configuración para el gráfico de barras apilado
+  const stackedBarChartBars = [
+    { dataKey: "combustible", name: "Combustible", color: "#FF9900" },
+    { dataKey: "mantenimiento", name: "Mantenimiento", color: "#6F797F" },
+    { dataKey: "seguros", name: "Seguros", color: "#444444" },
+    { dataKey: "imponderables", name: "Imponderables", color: "#666666" },
   ];
 
   // Configuración para el gráfico de líneas
@@ -49,20 +47,11 @@ export default function FinancieroPage() {
     { nombre: "Mantenimiento", saldo: 125000, presupuesto: 150000 },
     { nombre: "Combustible", saldo: 85000, presupuesto: 100000 },
     { nombre: "Casetas", saldo: 45000, presupuesto: 50000 },
-    { nombre: "No Deducibles", saldo: 32000, presupuesto: 25000 }
+    { nombre: "Imponderables", saldo: 32000, presupuesto: 25000 }
   ];
 
   // Calcular saldo total
   const saldoTotal = cuentasActualizadas.reduce((total, cuenta) => total + cuenta.saldo, 0);
-
-  // Paginación de datos
-  const paginateData = (data: any[]) => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return data.slice(startIndex, endIndex);
-  };
-
-  const totalPages = Math.ceil(cuentasResumen.length / itemsPerPage);
 
   return (
     <div>
@@ -94,17 +83,19 @@ export default function FinancieroPage() {
           data={gastosPorCategoria} 
           title="Gastos por Categoría"
           formatValue={formatPesos}
+          showValues={true}
         />
         <BarChart 
           data={ingresosVsGastosSemanales} 
-          title="Ingresos vs Gastos Semanales"
-          bars={barChartBars}
+          title="Gastos Semanales por Categoría"
+          bars={stackedBarChartBars}
           xAxisDataKey="semana"
           formatValue={formatPesos}
+          stacked={true}
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-6">
         <LineChart 
           data={saldosHistoricos} 
           title="Saldos Históricos"
@@ -112,63 +103,6 @@ export default function FinancieroPage() {
           xAxisDataKey="fecha"
           formatValue={formatPesos}
         />
-        <div className="card-dashboard">
-          <h3 className="font-montserrat text-xl mb-4">Desglose por Cuenta</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="text-flota-text bg-black/40 border-b border-flota-secondary/20">
-                <tr>
-                  <th className="px-4 py-3 font-montserrat">Cuenta</th>
-                  <th className="px-4 py-3 font-montserrat">Ingresos</th>
-                  <th className="px-4 py-3 font-montserrat">Gastos</th>
-                  <th className="px-4 py-3 font-montserrat">Saldo</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginateData(cuentasResumen).map((row, rowIndex) => (
-                  <tr 
-                    key={rowIndex} 
-                    className="border-b border-flota-secondary/10 hover:bg-black/30"
-                  >
-                    <td className="px-4 py-3">{row.cuenta}</td>
-                    <td className="px-4 py-3">{formatPesos(row.ingresos)}</td>
-                    <td className="px-4 py-3">{formatPesos(row.gastos)}</td>
-                    <td className="px-4 py-3">
-                      <span className="font-medium text-flota-primary">{formatPesos(row.saldo)}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          
-          {/* Paginador */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center mt-4 space-x-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-                className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
-              >
-                Anterior
-              </Button>
-              <span className="text-sm text-flota-text">
-                Página {currentPage} de {totalPages}
-              </span>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages}
-                className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
-              >
-                Siguiente
-              </Button>
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Drill down modal */}
@@ -196,7 +130,7 @@ export default function FinancieroPage() {
                   >
                     {Object.entries(row).map(([key, value]) => (
                       <td key={key} className="px-4 py-3">
-                        {typeof value === 'number' && (key === 'ingresos' || key === 'gastos' || key === 'saldo' || key === 'value')
+                        {typeof value === 'number' && (key === 'ingresos' || key === 'gastos' || key === 'saldo' || key === 'value' || key === 'combustible' || key === 'mantenimiento' || key === 'seguros' || key === 'imponderables')
                           ? formatPesos(value as number)
                           : value as React.ReactNode}
                       </td>
@@ -218,11 +152,11 @@ export default function FinancieroPage() {
           Ver Datos de Gastos
         </Button>
         <Button 
-          onClick={() => handleShowData(ingresosVsGastosSemanales, "Datos de Ingresos vs Gastos Semanales")}
+          onClick={() => handleShowData(ingresosVsGastosSemanales, "Datos de Gastos Semanales por Categoría")}
           variant="outline"
           className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
         >
-          Ver Datos de Ingresos/Gastos
+          Ver Datos de Gastos Semanales
         </Button>
         <Button 
           onClick={() => handleShowData(saldosHistoricos, "Datos de Saldos Históricos")}
