@@ -28,6 +28,25 @@ export default function AppLayout() {
       >
         <div className="w-full flex justify-center mb-6">
           <div className="flex items-center justify-between rounded-full px-4 py-2 gradient-animation shadow-lg max-w-md w-full">
+            <style jsx>{`
+              @keyframes gradientAnimation {
+                0% {
+                  background-position: 0% 50%;
+                }
+                50% {
+                  background-position: 100% 50%;
+                }
+                100% {
+                  background-position: 0% 50%;
+                }
+              }
+              
+              .gradient-animation {
+                background: linear-gradient(45deg, #FF9900, #FF6B6B, #FF4500, #FF6B6B);
+                background-size: 300% 300%;
+                animation: gradientAnimation 8s ease infinite;
+              }
+            `}</style>
             <img 
               src="/lovable-uploads/3dd8b1f8-c8c9-4ed6-b98c-f20a78ea5224.png" 
               alt="Teseo Logo" 

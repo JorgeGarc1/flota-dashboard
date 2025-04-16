@@ -7,12 +7,28 @@ type StatCardProps = {
   value: string | number;
   description?: string;
   reference?: string;
+  secondaryValue?: string | number;
+  secondaryLabel?: string;
+  tertiaryValue?: string | number;
+  tertiaryLabel?: string;
   icon?: React.ReactNode;
   className?: string;
   children?: React.ReactNode;
 };
 
-export function StatCard({ title, value, description, reference, icon, className, children }: StatCardProps) {
+export function StatCard({ 
+  title, 
+  value, 
+  description, 
+  reference, 
+  secondaryValue,
+  secondaryLabel,
+  tertiaryValue,
+  tertiaryLabel,
+  icon, 
+  className, 
+  children 
+}: StatCardProps) {
   return (
     <div className={cn("card-stat shadow-sm hover:shadow-md transition-all duration-300", className)}>
       {icon && <div className="mb-3 text-flota-primary">{icon}</div>}
@@ -32,6 +48,25 @@ export function StatCard({ title, value, description, reference, icon, className
           {description}
         </div>
       )}
+      
+      {/* Secondary and tertiary values */}
+      {(secondaryValue || tertiaryValue) && (
+        <div className="mt-3 pt-3 border-t border-flota-secondary/10">
+          {secondaryValue && secondaryLabel && (
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-xs text-flota-secondary">{secondaryLabel}:</span>
+              <span className="text-sm font-medium">{secondaryValue}</span>
+            </div>
+          )}
+          {tertiaryValue && tertiaryLabel && (
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-flota-secondary">{tertiaryLabel}:</span>
+              <span className="text-sm font-medium">{tertiaryValue}</span>
+            </div>
+          )}
+        </div>
+      )}
+      
       {children}
     </div>
   );

@@ -10,6 +10,7 @@ type DoughnutChartProps = {
   }[];
   title: string;
   className?: string;
+  subtitle?: string;
   formatValue?: (value: number) => string;
   showLegend?: boolean;
   innerRadius?: number;
@@ -20,6 +21,7 @@ type DoughnutChartProps = {
 export default function DoughnutChart({
   data,
   title,
+  subtitle,
   className,
   formatValue = (value) => `$${value.toLocaleString("es-MX")}`,
   showLegend = true,
@@ -55,8 +57,11 @@ export default function DoughnutChart({
 
   return (
     <div className={cn("card-dashboard flex flex-col h-full", className)}>
-      <h3 className="font-montserrat text-xl mb-4">{title}</h3>
-      <div className="flex-1 w-full">
+      <div className="mb-4">
+        <h3 className="font-montserrat text-xl">{title}</h3>
+        {subtitle && <p className="text-sm text-flota-secondary/80 mt-1">{subtitle}</p>}
+      </div>
+      <div className="flex-1 w-full h-full">
         <ResponsiveContainer width="100%" height="100%" minHeight={300}>
           <PieChart>
             <Pie

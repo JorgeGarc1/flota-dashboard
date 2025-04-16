@@ -9,7 +9,7 @@ import {
   kpisOperativos,
   vehiculosData
 } from "@/data/mock-data";
-import { AlertTriangle, Truck, Fuel, PackageCheck } from "lucide-react";
+import { AlertTriangle, Truck, Fuel, PackageCheck, Activity } from "lucide-react";
 import { 
   Table, 
   TableBody, 
@@ -19,14 +19,12 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { DataTable } from "@/components/ui/data-table";
 
 export default function OperativoPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogData, setDialogData] = useState<any[]>([]);
   const [dialogTitle, setDialogTitle] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [isDestinationsDialogOpen, setIsDestinationsDialogOpen] = useState(false);
   const itemsPerPage = 5;
 
   const handleShowData = (data: any[], title: string) => {
@@ -59,12 +57,18 @@ export default function OperativoPage() {
   // Formateo para kilómetros
   const formatKilometros = (value: number) => `${value.toLocaleString("es-MX")} km`;
 
-  // Calcular métricas de KPIs
-  const totalCamiones = vehiculosData.length;
-  const asistenciasEsperadas = totalCamiones * 7; // 7 asistencias semanales por camión
-  const porcentajeAsistencias = Math.round((kpisOperativos.asistencias / asistenciasEsperadas) * 100);
+  // Calcular métricas de indicadores operativos
+  const totalUnidades = vehiculosData.length;
+  const unidadesEnTaller = vehiculosData.filter(v => v.estatus === "Taller").length;
+  const unidadesDisponibles = totalUnidades - unidadesEnTaller;
+  const porcentajeDisponibilidad = Math.round((unidadesDisponibles / totalUnidades) * 100);
   
-  const metaKilometros = 2000 * totalCamiones; // 2000 km por camión
+  // Simulación de datos para capacidad operativa
+  const ordenesDeServicio = 12; // Simulado
+  const capacidadTotal = unidadesDisponibles * 1.5; // Asumiendo que cada unidad puede manejar 1.5 órdenes
+  const porcentajeOcupacion = Math.round((ordenesDeServicio / capacidadTotal) * 100);
+  
+  const metaKilometros = 2000 * totalUnidades; // 2000 km por camión
   const porcentajeKilometros = Math.min(100, Math.round((kpisOperativos.kilometros / metaKilometros) * 100));
   
   const porcentajeCombustible = Math.round((kpisOperativos.combustible / kpisOperativos.combustiblePresupuestado) * 100);
@@ -158,37 +162,6 @@ export default function OperativoPage() {
     },
   ];
 
-  // Datos de ejemplo para los destinos
-  const destinosData = [
-    { destino: "Cliente #1234", tiempoDescarga: "01:45", entregas: 3 },
-    { destino: "Cliente #2568", tiempoDescarga: "00:55", entregas: 1 },
-    { destino: "Cliente #7890", tiempoDescarga: "02:15", entregas: 5 },
-    { destino: "Cliente #4532", tiempoDescarga: "01:20", entregas: 2 },
-    { destino: "Cliente #9876", tiempoDescarga: "03:00", entregas: 4 },
-    { destino: "Cliente #5421", tiempoDescarga: "00:45", entregas: 1 },
-  ];
-
-  // Columnas para la tabla de destinos
-  interface DestinosColumn {
-    header: string;
-    accessor: keyof typeof destinosData[0];
-    cell?: (value: any) => React.ReactNode;
-  }
-
-  const destinosColumns: DestinosColumn[] = [
-    { header: "Destino (ID Cliente)", accessor: "destino" },
-    { header: "Tiempo de Descarga", accessor: "tiempoDescarga" },
-    { 
-      header: "# Entregas", 
-      accessor: "entregas",
-      cell: (value: number) => value.toString()
-    }
-  ];
-
-  const handleShowDestinations = () => {
-    setIsDestinationsDialogOpen(true);
-  };
-
   // Paginación de datos
   const paginateData = (data: any[]) => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -205,14 +178,28 @@ export default function OperativoPage() {
         subtitle="Métricas de operación de la flota"
       />
 
-      {/* KPIs sin barras de progreso */}
+      {/* KPIs actualizados */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <StatCard 
-          title="Asistencias"
-          value={kpisOperativos.asistencias}
-          reference={`Meta: ${asistenciasEsperadas} asistencias`}
-          description={`${porcentajeAsistencias}% de asistencias efectivas`}
+          title="Disponibilidad"
+          value={`${porcentajeDisponibilidad}%`}
+          secondaryValue={unidadesDisponibles}
+          secondaryLabel="Unidades activas"
+          tertiaryValue={totalUnidades}
+          tertiaryLabel="Total unidades"
+          description={`${unidadesEnTaller} unidades en taller`}
           icon={<div className="flex justify-center"><AlertTriangle size={32} /></div>}
+        />
+        
+        <StatCard 
+          title="Capacidad Operativa"
+          value={`${porcentajeOcupacion}%`}
+          secondaryValue={ordenesDeServicio}
+          secondaryLabel="Órdenes de servicio"
+          tertiaryValue={Math.round(capacidadTotal)}
+          tertiaryLabel="Capacidad máxima"
+          description="Ocupación del parque vehicular disponible"
+          icon={<div className="flex justify-center"><Activity size={32} /></div>}
         />
         
         <StatCard 
@@ -224,31 +211,12 @@ export default function OperativoPage() {
         />
         
         <StatCard 
-          title="Litros de Combustible"
-          value={kpisOperativos.combustible.toLocaleString("es-MX")}
-          reference={`Presupuesto: ${kpisOperativos.combustiblePresupuestado.toLocaleString("es-MX")} litros`}
-          description={`${porcentajeCombustible}% del presupuesto utilizado`}
-          icon={<div className="flex justify-center"><Fuel size={32} /></div>}
-        />
-        
-        <StatCard 
           title="Nivel de Servicio"
           value={`${nivelServicio}%`}
           reference={`${kpisOperativos.pedidosEntregados}/${kpisOperativos.pedidosProgramados} pedidos`}
           description="Pedidos entregados vs programados"
           icon={<div className="flex justify-center"><PackageCheck size={32} /></div>}
         />
-      </div>
-
-      {/* Botón para abrir el modal de destinos */}
-      <div className="mb-6">
-        <Button 
-          onClick={handleShowDestinations}
-          variant="outline"
-          className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
-        >
-          Ver Datos de Destinos
-        </Button>
       </div>
 
       {/* Tabla de vehículos */}
@@ -355,44 +323,6 @@ export default function OperativoPage() {
                             : value as React.ReactNode}
                         </td>
                       )
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Modal de destinos */}
-      <Dialog open={isDestinationsDialogOpen} onOpenChange={setIsDestinationsDialogOpen}>
-        <DialogContent className="bg-flota-background border-flota-secondary/20 text-flota-text max-w-4xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-montserrat">Datos de Destinos</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="text-flota-text bg-black/40 border-b border-flota-secondary/20">
-                <tr>
-                  {destinosColumns.map((column) => (
-                    <th key={column.accessor} className="px-4 py-3 font-montserrat">
-                      {column.header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {destinosData.map((row, rowIndex) => (
-                  <tr 
-                    key={rowIndex} 
-                    className="border-b border-flota-secondary/10 hover:bg-black/30"
-                  >
-                    {destinosColumns.map((column) => (
-                      <td key={column.accessor} className="px-4 py-3">
-                        {column.cell 
-                          ? column.cell(row[column.accessor]) 
-                          : row[column.accessor]}
-                      </td>
                     ))}
                   </tr>
                 ))}

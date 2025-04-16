@@ -15,6 +15,32 @@ export default function FinancieroPage() {
   // Formatear para mostrar en pesos mexicanos
   const formatPesos = (value: number) => `$${value.toLocaleString("es-MX")}`;
 
+  // Obtener la semana actual y fechas
+  const currentDate = new Date();
+  const startOfWeek = new Date(currentDate);
+  startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+  const endOfWeek = new Date(currentDate);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  
+  // Formato de fecha
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('es-MX', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+  
+  // Obtener número de semana del año
+  const getWeekNumber = (date: Date) => {
+    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+    const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
+    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+  };
+  
+  const currentWeek = getWeekNumber(currentDate);
+  const weekSubtitle = `Semana ${currentWeek}: ${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
+
   // Configuración para el gráfico de barras apilado
   const stackedBarChartBars = [
     { dataKey: "combustible", name: "Combustible", color: "#FF9900" },
@@ -62,7 +88,8 @@ export default function FinancieroPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <DoughnutChart 
           data={gastosPorCategoria} 
-          title="Gastos por Categoría"
+          title="Gastos semanales por categoría"
+          subtitle={weekSubtitle}
           formatValue={formatPesos}
           showValues={true}
         />
@@ -100,6 +127,7 @@ export default function FinancieroPage() {
           xAxisDataKey="semana"
           formatValue={formatPesos}
           stacked={true}
+          filterByRange={true}
         />
       </div>
     </div>
