@@ -12,8 +12,8 @@ type TemperatureGaugeProps = {
 export default function TemperatureGauge({ 
   value, 
   min = 0, 
-  max = 8, 
-  optimal = { min: 2, max: 4 } 
+  max = 10, 
+  optimal = { min: 2, max: 6 } 
 }: TemperatureGaugeProps) {
   // Calculate percentage for the gauge
   const percentage = ((value - min) / (max - min)) * 100;
