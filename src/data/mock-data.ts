@@ -3,20 +3,19 @@ export const gastosPorCategoria = [
   { name: "Combustible", value: 45000, color: "#FF9900" },
   { name: "Mantenimiento", value: 28000, color: "#6F797F" },
   { name: "Imponderables", value: 18000, color: "#666666" },
-  { name: "Seguros", value: 15000, color: "#444444" },
-  { name: "Otros", value: 7000, color: "#222222" },
+  { name: "Casetas", value: 15000, color: "#444444" },
 ];
 
 // Datos por semana para la visualización financiera - reestructurados para gráfico apilado
 export const ingresosVsGastosSemanales = [
-  { semana: "Sem 1", combustible: 12000, mantenimiento: 8000, seguros: 3000, imponderables: 3000 },
-  { semana: "Sem 2", combustible: 13000, mantenimiento: 8500, seguros: 3500, imponderables: 3000 },
-  { semana: "Sem 3", combustible: 14000, mantenimiento: 9000, seguros: 3000, imponderables: 3000 },
-  { semana: "Sem 4", combustible: 12500, mantenimiento: 8500, seguros: 3000, imponderables: 3000 },
-  { semana: "Sem 5", combustible: 15000, mantenimiento: 9500, seguros: 3000, imponderables: 2500 },
-  { semana: "Sem 6", combustible: 13500, mantenimiento: 8500, seguros: 3000, imponderables: 3000 },
-  { semana: "Sem 7", combustible: 16000, mantenimiento: 10000, seguros: 3000, imponderables: 3000 },
-  { semana: "Sem 8", combustible: 14000, mantenimiento: 9000, seguros: 3000, imponderables: 3000 },
+  { semana: "Sem 1", combustible: 12000, mantenimiento: 8000, casetas: 3000, imponderables: 3000 },
+  { semana: "Sem 2", combustible: 13000, mantenimiento: 8500, casetas: 3500, imponderables: 3000 },
+  { semana: "Sem 3", combustible: 14000, mantenimiento: 9000, casetas: 3000, imponderables: 3000 },
+  { semana: "Sem 4", combustible: 12500, mantenimiento: 8500, casetas: 3000, imponderables: 3000 },
+  { semana: "Sem 5", combustible: 15000, mantenimiento: 9500, casetas: 3000, imponderables: 2500 },
+  { semana: "Sem 6", combustible: 13500, mantenimiento: 8500, casetas: 3000, imponderables: 3000 },
+  { semana: "Sem 7", combustible: 16000, mantenimiento: 10000, casetas: 3000, imponderables: 3000 },
+  { semana: "Sem 8", combustible: 14000, mantenimiento: 9000, casetas: 3000, imponderables: 3000 },
 ];
 
 export const saldosTiempo = [
@@ -305,4 +304,18 @@ export const usuariosOrganizacion = [
   "Sofía García",
   "Rodrigo Sánchez",
   "Ana María Jiménez",
+];
+
+// Top 10 unidades con mayor gasto en la semana
+export const topUnidadesGasto = [
+  { ranking: 1, numeroEco: "FL005", gastoTotal: 32500 },
+  { ranking: 2, numeroEco: "FL003", gastoTotal: 29800 },
+  { ranking: 3, numeroEco: "FL007", gastoTotal: 28400 },
+  { ranking: 4, numeroEco: "FL001", gastoTotal: 26700 },
+  { ranking: 5, numeroEco: "FL002", gastoTotal: 25900 },
+  { ranking: 6, numeroEco: "FL006", gastoTotal: 24200 },
+  { ranking: 7, numeroEco: "FL004", gastoTotal: 22800 },
+  { ranking: 8, numeroEco: "FL009", gastoTotal: 21500 },
+  { ranking: 9, numeroEco: "FL008", gastoTotal: 20100 },
+  { ranking: 10, numeroEco: "FL010", gastoTotal: 19600 },
 ];

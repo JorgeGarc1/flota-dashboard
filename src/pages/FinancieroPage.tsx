@@ -1,28 +1,17 @@
+
 import { useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import DoughnutChart from "@/components/charts/DoughnutChart";
 import BarChart from "@/components/charts/BarChart";
-import LineChart from "@/components/charts/LineChart";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/ui/stat-card";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { 
   gastosPorCategoria, 
   ingresosVsGastosSemanales,
-  saldosHistoricos,
+  topUnidadesGasto,
 } from "@/data/mock-data";
 
 export default function FinancieroPage() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogData, setDialogData] = useState<any[]>([]);
-  const [dialogTitle, setDialogTitle] = useState("");
-
-  const handleShowData = (data: any[], title: string) => {
-    setDialogData(data);
-    setDialogTitle(title);
-    setIsDialogOpen(true);
-  };
-
   // Formatear para mostrar en pesos mexicanos
   const formatPesos = (value: number) => `$${value.toLocaleString("es-MX")}`;
 
@@ -30,13 +19,8 @@ export default function FinancieroPage() {
   const stackedBarChartBars = [
     { dataKey: "combustible", name: "Combustible", color: "#FF9900" },
     { dataKey: "mantenimiento", name: "Mantenimiento", color: "#6F797F" },
-    { dataKey: "seguros", name: "Seguros", color: "#444444" },
+    { dataKey: "casetas", name: "Casetas", color: "#444444" },
     { dataKey: "imponderables", name: "Imponderables", color: "#666666" },
-  ];
-
-  // Configuración para el gráfico de líneas
-  const lineChartLines = [
-    { dataKey: "saldo", name: "Saldo", color: "#FF9900" },
   ];
 
   // Crear cuentas específicas actualizadas con las categorías solicitadas
@@ -92,76 +76,27 @@ export default function FinancieroPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-6">
-        <LineChart 
-          data={saldosHistoricos} 
-          title="Saldos Históricos"
-          lines={lineChartLines}
-          xAxisDataKey="fecha"
-          formatValue={formatPesos}
-        />
-      </div>
-
-      {/* Drill down modal */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-flota-background border-flota-secondary/20 text-flota-text max-w-4xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-montserrat">{dialogTitle}</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="text-flota-text bg-black/40 border-b border-flota-secondary/20">
-                <tr>
-                  {dialogData.length > 0 && Object.keys(dialogData[0]).map((key) => (
-                    <th key={key} className="px-4 py-3 font-montserrat">
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {dialogData.map((row, rowIndex) => (
-                  <tr 
-                    key={rowIndex} 
-                    className="border-b border-flota-secondary/10 hover:bg-black/30"
-                  >
-                    {Object.entries(row).map(([key, value]) => (
-                      <td key={key} className="px-4 py-3">
-                        {typeof value === 'number' && (key === 'ingresos' || key === 'gastos' || key === 'saldo' || key === 'value' || key === 'combustible' || key === 'mantenimiento' || key === 'seguros' || key === 'imponderables')
-                          ? formatPesos(value as number)
-                          : value as React.ReactNode}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <div className="flex space-x-4 mt-8">
-        <Button 
-          onClick={() => handleShowData(gastosPorCategoria, "Datos de Gastos por Categoría")}
-          variant="outline"
-          className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
-        >
-          Ver Datos de Gastos
-        </Button>
-        <Button 
-          onClick={() => handleShowData(ingresosVsGastosSemanales, "Datos de Gastos Semanales por Categoría")}
-          variant="outline"
-          className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
-        >
-          Ver Datos de Gastos Semanales
-        </Button>
-        <Button 
-          onClick={() => handleShowData(saldosHistoricos, "Datos de Saldos Históricos")}
-          variant="outline"
-          className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
-        >
-          Ver Datos de Saldos
-        </Button>
+      {/* Top 10 unidades con mayor gasto */}
+      <div className="card-dashboard mb-6">
+        <h3 className="font-montserrat text-xl mb-4">Top 10 Unidades con Mayor Gasto Semanal</h3>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-24">Ranking</TableHead>
+              <TableHead>Número Eco</TableHead>
+              <TableHead className="text-right">Gasto Total</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {topUnidadesGasto.map((unidad) => (
+              <TableRow key={unidad.numeroEco}>
+                <TableCell className="font-medium">{unidad.ranking}</TableCell>
+                <TableCell>{unidad.numeroEco}</TableCell>
+                <TableCell className="text-right">{formatPesos(unidad.gastoTotal)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
