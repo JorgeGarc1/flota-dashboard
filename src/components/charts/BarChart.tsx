@@ -34,6 +34,12 @@ export default function BarChart({
   formatValue = (value) => `$${value.toLocaleString("es-MX")}`,
   stacked = false,
 }: BarChartProps) {
+  // Creamos un mapa de nombres para facilitar el acceso en el tooltip
+  const namesMap = bars.reduce((acc, bar) => {
+    acc[bar.dataKey] = bar.name;
+    return acc;
+  }, {} as Record<string, string>);
+
   return (
     <div className={cn("card-dashboard flex flex-col h-full", className)}>
       <h3 className="font-montserrat text-xl mb-4">{title}</h3>
@@ -51,7 +57,10 @@ export default function BarChart({
             <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
             <XAxis dataKey={xAxisDataKey} />
             <YAxis tickFormatter={formatValue} />
-            <Tooltip formatter={(value: number) => [formatValue(value), 'Valor']} />
+            <Tooltip 
+              formatter={(value: number, name: string) => [formatValue(value), namesMap[name] || name]} 
+              labelFormatter={(label) => `Semana: ${label}`}
+            />
             <Legend />
             {bars.map((bar) => (
               <Bar

@@ -58,7 +58,7 @@ export default function FinancieroPage() {
         />
       </div>
 
-      {/* Gráficos */}
+      {/* Gráficos reorganizados según lo solicitado */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <DoughnutChart 
           data={gastosPorCategoria} 
@@ -66,6 +66,33 @@ export default function FinancieroPage() {
           formatValue={formatPesos}
           showValues={true}
         />
+        
+        {/* Top 10 unidades con mayor gasto (movido a la derecha) */}
+        <div className="card-dashboard">
+          <h3 className="font-montserrat text-xl mb-4">Top 10 Unidades con Mayor Gasto Semanal</h3>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-24">Ranking</TableHead>
+                <TableHead>Número Eco</TableHead>
+                <TableHead className="text-right">Gasto Total</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {topUnidadesGasto.map((unidad) => (
+                <TableRow key={unidad.numeroEco}>
+                  <TableCell className="font-medium">{unidad.ranking}</TableCell>
+                  <TableCell>{unidad.numeroEco}</TableCell>
+                  <TableCell className="text-right">{formatPesos(unidad.gastoTotal)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+      
+      {/* Gráfico de gastos semanales (movido abajo) */}
+      <div className="mb-6">
         <BarChart 
           data={ingresosVsGastosSemanales}
           title="Gastos Semanales por Categoría"
@@ -74,29 +101,6 @@ export default function FinancieroPage() {
           formatValue={formatPesos}
           stacked={true}
         />
-      </div>
-
-      {/* Top 10 unidades con mayor gasto */}
-      <div className="card-dashboard mb-6">
-        <h3 className="font-montserrat text-xl mb-4">Top 10 Unidades con Mayor Gasto Semanal</h3>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-24">Ranking</TableHead>
-              <TableHead>Número Eco</TableHead>
-              <TableHead className="text-right">Gasto Total</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {topUnidadesGasto.map((unidad) => (
-              <TableRow key={unidad.numeroEco}>
-                <TableCell className="font-medium">{unidad.ranking}</TableCell>
-                <TableCell>{unidad.numeroEco}</TableCell>
-                <TableCell className="text-right">{formatPesos(unidad.gastoTotal)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
       </div>
     </div>
   );

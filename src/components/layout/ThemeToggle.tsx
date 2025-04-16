@@ -15,7 +15,7 @@ export default function ThemeToggle() {
         "rounded-full w-10 h-10 p-0 flex items-center justify-center",
         theme === 'dark' 
           ? "bg-flota-secondary/50 text-flota-primary hover:bg-flota-secondary/30" 
-          : "bg-amber-200 text-amber-700 hover:bg-amber-300"
+          : "bg-amber-100 text-amber-600 hover:bg-amber-200"
       )}
       aria-label="Cambiar tema"
     >

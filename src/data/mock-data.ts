@@ -18,6 +18,20 @@ export const ingresosVsGastosSemanales = [
   { semana: "Sem 8", combustible: 14000, mantenimiento: 9000, casetas: 3000, imponderables: 3000 },
 ];
 
+// Top 10 unidades con mayor gasto en la semana
+export const topUnidadesGasto = [
+  { ranking: 1, numeroEco: "FL005", gastoTotal: 32500 },
+  { ranking: 2, numeroEco: "FL003", gastoTotal: 29800 },
+  { ranking: 3, numeroEco: "FL007", gastoTotal: 28400 },
+  { ranking: 4, numeroEco: "FL001", gastoTotal: 26700 },
+  { ranking: 5, numeroEco: "FL002", gastoTotal: 25900 },
+  { ranking: 6, numeroEco: "FL006", gastoTotal: 24200 },
+  { ranking: 7, numeroEco: "FL004", gastoTotal: 22800 },
+  { ranking: 8, numeroEco: "FL009", gastoTotal: 21500 },
+  { ranking: 9, numeroEco: "FL008", gastoTotal: 20100 },
+  { ranking: 10, numeroEco: "FL010", gastoTotal: 19600 },
+];
+
 export const saldosTiempo = [
   { fecha: "Ene", saldo: 25000 },
   { fecha: "Feb", saldo: 55000 },
@@ -304,18 +318,4 @@ export const usuariosOrganizacion = [
   "Sofía García",
   "Rodrigo Sánchez",
   "Ana María Jiménez",
-];
-
-// Top 10 unidades con mayor gasto en la semana
-export const topUnidadesGasto = [
-  { ranking: 1, numeroEco: "FL005", gastoTotal: 32500 },
-  { ranking: 2, numeroEco: "FL003", gastoTotal: 29800 },
-  { ranking: 3, numeroEco: "FL007", gastoTotal: 28400 },
-  { ranking: 4, numeroEco: "FL001", gastoTotal: 26700 },
-  { ranking: 5, numeroEco: "FL002", gastoTotal: 25900 },
-  { ranking: 6, numeroEco: "FL006", gastoTotal: 24200 },
-  { ranking: 7, numeroEco: "FL004", gastoTotal: 22800 },
-  { ranking: 8, numeroEco: "FL009", gastoTotal: 21500 },
-  { ranking: 9, numeroEco: "FL008", gastoTotal: 20100 },
-  { ranking: 10, numeroEco: "FL010", gastoTotal: 19600 },
 ];

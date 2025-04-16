@@ -31,7 +31,7 @@ export default function DoughnutChart({
   const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, value }: any) => {
     if (!showValues) return null;
     
-    const radius = innerRadius + (outerRadius - innerRadius) * 1.3;
+    const radius = innerRadius + (outerRadius - innerRadius) * 1.5;
     const x = cx + radius * Math.cos(-midAngle * Math.PI / 180);
     const y = cy + radius * Math.sin(-midAngle * Math.PI / 180);
     
@@ -49,6 +49,9 @@ export default function DoughnutChart({
       </text>
     );
   };
+
+  // Calcula el valor total para mostrar en el centro
+  const total = data.reduce((sum, item) => sum + item.value, 0);
 
   return (
     <div className={cn("card-dashboard flex flex-col h-full", className)}>
@@ -70,9 +73,30 @@ export default function DoughnutChart({
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
+              <Label
+                position="center"
+                content={({ viewBox }) => {
+                  const { cx, cy } = viewBox as { cx: number; cy: number };
+                  return (
+                    <text
+                      x={cx}
+                      y={cy}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                    >
+                      <tspan x={cx} y={cy - 10} fill="#666" fontSize="12" textAnchor="middle">
+                        Total
+                      </tspan>
+                      <tspan x={cx} y={cy + 10} fill="#333" fontSize="14" fontWeight="bold" textAnchor="middle">
+                        {formatValue(total)}
+                      </tspan>
+                    </text>
+                  );
+                }}
+              />
             </Pie>
             <Tooltip 
-              formatter={(value: number) => [formatValue(value), 'Valor']}
+              formatter={(value: number, name: string) => [formatValue(value), name]}
             />
             {showLegend && (
               <Legend layout="horizontal" verticalAlign="bottom" align="center" />

@@ -27,7 +27,7 @@ export default function AppLayout() {
         )}
       >
         <div className="w-full flex justify-center mb-6">
-          <div className="flex items-center justify-between rounded-full px-4 py-2 bg-gradient-to-r from-yellow-500 via-red-500 to-flota-primary shadow-lg max-w-md w-full">
+          <div className="flex items-center justify-between rounded-full px-4 py-2 gradient-animation shadow-lg max-w-md w-full">
             <img 
               src="/lovable-uploads/3dd8b1f8-c8c9-4ed6-b98c-f20a78ea5224.png" 
               alt="Teseo Logo" 

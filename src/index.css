@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
 
 @tailwind base;
@@ -48,43 +49,43 @@
   }
 
   .light {
-    /* Variables para el tema claro usando los colores requeridos */
+    /* Variables mejoradas para el tema claro */
     --background: 0 0% 100%; /* #FFFFFF */
-    --foreground: 0 0% 1.2%; /* #030303 */
+    --foreground: 220 15% 10%; /* Un tono azulado oscuro en lugar de negro puro */
 
-    --card: 0 0% 97%; /* Gris muy claro para cards */
-    --card-foreground: 0 0% 1.2%; /* #030303 */
+    --card: 210 20% 98%; /* Un tono ligeramente azulado para las cards */
+    --card-foreground: 220 15% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 1.2%; /* #030303 */
+    --popover-foreground: 220 15% 10%;
 
-    --primary: 36 100% 50%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 25 100% 50%; /* Naranja más vibrante */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 213 6% 47%; /* #6F797F */
+    --secondary: 215 10% 42%; /* #6F797F con un toque más azulado */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 217 9% 83%; /* #CED1D8 */
-    --muted-foreground: 0 0% 7%;  /* #111111 */
+    --muted: 220 10% 92%; /* Gris con un toque azulado */
+    --muted-foreground: 220 15% 30%;
 
-    --accent: 0 85% 43%;
+    --accent: 5 85% 43%; /* Rojo acentuado ligeramente diferente */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 85% 43%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 217 9% 83%; /* #CED1D8 */
-    --input: 217 9% 83%; /* #CED1D8 */
-    --ring: 36 100% 50%;
+    --border: 220 10% 88%; /* Bordes con toque azulado */
+    --input: 220 10% 88%;
+    --ring: 25 100% 50%;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 7%; /* #111111 */
-    --sidebar-primary: 36 100% 50%;
-    --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 95%;
-    --sidebar-accent-foreground: 0 0% 7%; /* #111111 */
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 36 100% 50%;
+    --sidebar-background: 210 30% 98%;
+    --sidebar-foreground: 220 15% 10%;
+    --sidebar-primary: 25 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 30% 95%;
+    --sidebar-accent-foreground: 220 15% 10%;
+    --sidebar-border: 210 30% 90%;
+    --sidebar-ring: 25 100% 50%;
   }
 }
 
@@ -120,7 +121,7 @@
 }
 
 .light .card-dashboard {
-  @apply rounded-lg border border-[#CED1D8] bg-[#f8f8f8] p-5 shadow-sm;
+  @apply rounded-lg border border-[#D8E1EB] bg-[#F4F8FC] p-5 shadow-sm;
 }
 
 .dark .card-stat {
@@ -128,7 +129,7 @@
 }
 
 .light .card-stat {
-  @apply rounded-lg border border-[#CED1D8] bg-white p-4 flex flex-col items-center justify-center shadow-sm transition-all;
+  @apply rounded-lg border border-[#D8E1EB] bg-white p-4 flex flex-col items-center justify-center shadow-sm transition-all;
 }
 
 /* Bloques y Cajas para tema claro según especificación */
@@ -137,7 +138,7 @@
 }
 
 .light .box {
-  @apply bg-[#CED1D8];
+  @apply bg-[#D8E1EB];
 }
 
 .format-number {
@@ -155,4 +156,23 @@
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Animación de gradiente para encabezado */
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-animation {
+  background: linear-gradient(-45deg, #FF9900, #FF6347, #FFA500, #FF4500);
+  background-size: 400% 400%;
+  animation: gradient-animation 8s ease infinite;
 }
