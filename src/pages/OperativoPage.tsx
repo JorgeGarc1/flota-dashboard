@@ -1,15 +1,15 @@
+
 import { useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import LineChart from "@/components/charts/LineChart";
 import { StatCard } from "@/components/ui/stat-card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   viajesDiarios,
   kpisOperativos,
   vehiculosData
 } from "@/data/mock-data";
-import { AlertTriangle, Truck, Fuel, PackageCheck, Activity } from "lucide-react";
+import { AlertTriangle, Truck, Fuel, PackageCheck, Activity, Columns, Filter } from "lucide-react";
 import { 
   Table, 
   TableBody, 
@@ -19,19 +19,41 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  ToggleGroup,
+  ToggleGroupItem
+} from "@/components/ui/toggle-group";
 
 export default function OperativoPage() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogData, setDialogData] = useState<any[]>([]);
-  const [dialogTitle, setDialogTitle] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [timeRange, setTimeRange] = useState("day");
   const itemsPerPage = 5;
 
-  const handleShowData = (data: any[], title: string) => {
-    setDialogData(data);
-    setDialogTitle(title);
-    setIsDialogOpen(true);
-  };
+  // Estado para la visibilidad de las columnas
+  const [visibleColumns, setVisibleColumns] = useState({
+    numeroEco: true,
+    estatus: true,
+    kilometrosAcumulados: true,
+    nivelServicio: true,
+    rendimientoPromedio: true,
+    incidencias: true,
+    polizaSeguro: true
+  });
 
   // Crear datos combinados para el gráfico dual
   const combinedChartData = viajesDiarios.map((item, index) => {
@@ -83,14 +105,16 @@ export default function OperativoPage() {
     header: string;
     accessor: keyof VehiculoData;
     cell?: (value: any, row?: VehiculoData) => React.ReactNode;
+    isVisible: boolean;
   }
   
   // Now define the columns with the proper typing
   const vehiculosColumns: TableColumn[] = [
-    { header: "Número Eco", accessor: "numeroEco" },
+    { header: "Número Eco", accessor: "numeroEco", isVisible: visibleColumns.numeroEco },
     { 
       header: "Estatus", 
       accessor: "estatus", 
+      isVisible: visibleColumns.estatus,
       cell: (value: string) => {
         const getStatusColor = (status: string) => {
           switch(status) {
@@ -114,43 +138,30 @@ export default function OperativoPage() {
     { 
       header: "Kilómetros", 
       accessor: "kilometrosAcumulados", 
+      isVisible: visibleColumns.kilometrosAcumulados,
       cell: (value: number) => value.toLocaleString("es-MX") 
     },
-    { header: "Operador", accessor: "operadorAsignado" },
     { 
       header: "Nivel Servicio", 
       accessor: "nivelServicio", 
+      isVisible: visibleColumns.nivelServicio,
       cell: (value: number) => `${value}%` 
     },
     { 
       header: "Rendimiento (km/lt)", 
       accessor: "rendimientoPromedio", 
+      isVisible: visibleColumns.rendimientoPromedio,
       cell: (value: number) => value.toFixed(2) 
     },
-    { header: "Incidencias", accessor: "incidencias" },
     { 
-      header: "Saldo Casetas", 
-      accessor: "saldoCasetas", 
-      cell: (value: number) => `$${value.toLocaleString("es-MX")}` 
-    },
-    { 
-      header: "KM para Servicio", 
-      accessor: "kmParaServicio", 
-      cell: (value: number) => value.toLocaleString("es-MX") 
-    },
-    { 
-      header: "Costo por KM", 
-      accessor: "costoPorKm", 
-      cell: (value: number) => `$${value.toFixed(2)}` 
-    },
-    { 
-      header: "Costo Mantenimiento", 
-      accessor: "costoMantenimiento", 
-      cell: (value: number) => `$${value.toFixed(2)}` 
+      header: "Incidencias", 
+      accessor: "incidencias", 
+      isVisible: visibleColumns.incidencias 
     },
     { 
       header: "Póliza Seguro", 
       accessor: "polizaSeguro", 
+      isVisible: visibleColumns.polizaSeguro,
       cell: (value: string) => {
         const isActive = value === "Vigente";
         return (
@@ -161,6 +172,17 @@ export default function OperativoPage() {
       }
     },
   ];
+
+  // Filtrar columnas visibles
+  const visibleVehiculosColumns = vehiculosColumns.filter(col => col.isVisible);
+
+  // Manejar el cambio de visibilidad de columnas
+  const toggleColumnVisibility = (accessor: keyof typeof visibleColumns) => {
+    setVisibleColumns(prev => ({
+      ...prev,
+      [accessor]: !prev[accessor],
+    }));
+  };
 
   // Paginación de datos
   const paginateData = (data: any[]) => {
@@ -177,6 +199,21 @@ export default function OperativoPage() {
         title="Eficiencia Operativa" 
         subtitle="Métricas de operación de la flota"
       />
+
+      {/* Filtro de rango de tiempo */}
+      <div className="mb-6 flex justify-end">
+        <ToggleGroup type="single" value={timeRange} onValueChange={(value) => value && setTimeRange(value)}>
+          <ToggleGroupItem value="day" className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60 data-[state=on]:bg-black/70">
+            Día
+          </ToggleGroupItem>
+          <ToggleGroupItem value="week" className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60 data-[state=on]:bg-black/70">
+            Semana
+          </ToggleGroupItem>
+          <ToggleGroupItem value="month" className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60 data-[state=on]:bg-black/70">
+            Mes
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
 
       {/* KPIs actualizados */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -221,12 +258,71 @@ export default function OperativoPage() {
 
       {/* Tabla de vehículos */}
       <div className="card-dashboard mb-6">
-        <h3 className="font-montserrat text-xl mb-4">Status de Flota</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-montserrat text-xl">Status de Flota</h3>
+          
+          {/* Dropdown para seleccionar columnas visibles */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60">
+                <Columns className="mr-2 h-4 w-4" />
+                Columnas
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-flota-background border-flota-secondary/20 text-flota-text">
+              <DropdownMenuLabel>Mostrar columnas</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuCheckboxItem
+                checked={visibleColumns.numeroEco}
+                onCheckedChange={() => toggleColumnVisibility("numeroEco")}
+              >
+                Número Eco
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={visibleColumns.estatus}
+                onCheckedChange={() => toggleColumnVisibility("estatus")}
+              >
+                Estatus
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={visibleColumns.kilometrosAcumulados}
+                onCheckedChange={() => toggleColumnVisibility("kilometrosAcumulados")}
+              >
+                Kilómetros
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={visibleColumns.nivelServicio}
+                onCheckedChange={() => toggleColumnVisibility("nivelServicio")}
+              >
+                Nivel Servicio
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={visibleColumns.rendimientoPromedio}
+                onCheckedChange={() => toggleColumnVisibility("rendimientoPromedio")}
+              >
+                Rendimiento
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={visibleColumns.incidencias}
+                onCheckedChange={() => toggleColumnVisibility("incidencias")}
+              >
+                Incidencias
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={visibleColumns.polizaSeguro}
+                onCheckedChange={() => toggleColumnVisibility("polizaSeguro")}
+              >
+                Póliza Seguro
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-black/40 border-b border-flota-secondary/20">
-                {vehiculosColumns.map((column) => (
+                {visibleVehiculosColumns.map((column) => (
                   <TableHead key={column.accessor as string} className="text-flota-text font-montserrat">
                     {column.header}
                   </TableHead>
@@ -236,7 +332,7 @@ export default function OperativoPage() {
             <TableBody>
               {paginateData(vehiculosData).map((vehiculo, index) => (
                 <TableRow key={index} className="border-b border-flota-secondary/10 hover:bg-black/30">
-                  {vehiculosColumns.map((column) => (
+                  {visibleVehiculosColumns.map((column) => (
                     <TableCell key={column.accessor as string}>
                       {column.cell 
                         ? column.cell(vehiculo[column.accessor], vehiculo) 
@@ -288,65 +384,6 @@ export default function OperativoPage() {
           formatSecondaryValue={formatKilometros}
           showSecondaryAxis={true}
         />
-      </div>
-
-      {/* Modal de datos generales */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-flota-background border-flota-secondary/20 text-flota-text max-w-4xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-montserrat">{dialogTitle}</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="text-flota-text bg-black/40 border-b border-flota-secondary/20">
-                <tr>
-                  {dialogData.length > 0 && Object.keys(dialogData[0]).map((key) => (
-                    key !== "color" && (
-                      <th key={key} className="px-4 py-3 font-montserrat">
-                        {key.charAt(0).toUpperCase() + key.slice(1)}
-                      </th>
-                    )
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {dialogData.map((row, rowIndex) => (
-                  <tr 
-                    key={rowIndex} 
-                    className="border-b border-flota-secondary/10 hover:bg-black/30"
-                  >
-                    {Object.entries(row).map(([key, value]) => (
-                      key !== "color" && (
-                        <td key={key} className="px-4 py-3">
-                          {typeof value === 'number' 
-                            ? value 
-                            : value as React.ReactNode}
-                        </td>
-                      )
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <div className="flex space-x-4 mt-8">
-        <Button 
-          onClick={() => handleShowData(viajesDiarios, "Datos de Viajes Diarios")}
-          variant="outline"
-          className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
-        >
-          Ver Datos de Viajes Diarios
-        </Button>
-        <Button 
-          onClick={() => handleShowData(vehiculosData, "Datos Detallados de Vehículos")}
-          variant="outline"
-          className="bg-black/40 text-flota-text border-flota-secondary/30 hover:bg-black/60"
-        >
-          Ver Datos Detallados de Vehículos
-        </Button>
       </div>
     </div>
   );
