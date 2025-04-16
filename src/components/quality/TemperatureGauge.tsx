@@ -7,13 +7,15 @@ type TemperatureGaugeProps = {
   min?: number;
   max?: number;
   optimal?: { min: number; max: number };
+  compact?: boolean;
 };
 
 export default function TemperatureGauge({ 
   value, 
   min = 0, 
   max = 10, 
-  optimal = { min: 2, max: 6 } 
+  optimal = { min: 2, max: 6 },
+  compact = false
 }: TemperatureGaugeProps) {
   // Calculate percentage for the gauge
   const percentage = ((value - min) / (max - min)) * 100;
@@ -29,9 +31,12 @@ export default function TemperatureGauge({
   }
   
   return (
-    <div className="flex flex-col items-center">
+    <div className={cn("flex flex-col", compact ? "items-start" : "items-center")}>
       {/* Temperature Value */}
-      <div className={cn("text-5xl font-bold mb-4", statusColor)}>
+      <div className={cn(
+        compact ? "text-3xl font-bold mb-2" : "text-5xl font-bold mb-4", 
+        statusColor
+      )}>
         {value.toFixed(1)}°C
       </div>
       
@@ -66,7 +71,7 @@ export default function TemperatureGauge({
       </div>
       
       {/* Status Text */}
-      <div className="mt-4 text-center">
+      <div className={cn("mt-4 text-center", compact && "text-sm")}>
         <span className="font-medium">Estado: </span>
         <span className={statusColor}>
           {value < optimal.min ? 'Temperatura Baja' : 
@@ -76,7 +81,7 @@ export default function TemperatureGauge({
       </div>
       
       {/* Additional Info */}
-      <div className="mt-2 text-xs text-muted-foreground text-center">
+      <div className={cn("mt-2 text-xs text-muted-foreground", compact ? "text-left" : "text-center")}>
         Rango óptimo: {optimal.min}°C - {optimal.max}°C
       </div>
     </div>
