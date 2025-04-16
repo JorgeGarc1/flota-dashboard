@@ -285,7 +285,7 @@ export default function QualityControlPage() {
                           <TableRow>
                             <TableCell colSpan={6} className="p-0">
                               <div className="bg-muted/40 p-4 rounded-md my-2 mx-4">
-                                <h4 className="text-sm font-medium mb-2">Detalles de incidencias (Temperatura > 6°C)</h4>
+                                <h4 className="text-sm font-medium mb-2">Detalles de incidencias (Temperatura {">"}  6°C)</h4>
                                 <Table>
                                   <TableHeader>
                                     <TableRow>
