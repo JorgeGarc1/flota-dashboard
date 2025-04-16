@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import DoughnutChart from "@/components/charts/DoughnutChart";
@@ -9,9 +8,7 @@ import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/ui/stat-card";
 import { 
   gastosPorCategoria, 
-  ingresosVsGastosMensuales,
   ingresosVsGastosSemanales,
-  saldosTiempo,
   saldosHistoricos,
 } from "@/data/mock-data";
 
@@ -86,7 +83,7 @@ export default function FinancieroPage() {
           showValues={true}
         />
         <BarChart 
-          data={ingresosVsGastosSemanales} 
+          data={ingresosVsGastosSemanales}
           title="Gastos Semanales por Categoría"
           bars={stackedBarChartBars}
           xAxisDataKey="semana"
