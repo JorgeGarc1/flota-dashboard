@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import DoughnutChart from "@/components/charts/DoughnutChart";
@@ -92,9 +91,10 @@ export default function FinancieroPage() {
           subtitle={weekSubtitle}
           formatValue={formatPesos}
           showValues={true}
+          className="h-[450px]" // Increased size by 1.5x
         />
         
-        {/* Top 10 unidades con mayor gasto (movido a la derecha) */}
+        {/* Top 10 unidades con mayor gasto */}
         <div className="card-dashboard">
           <h3 className="font-montserrat text-xl mb-4">Top 10 Unidades con Mayor Gasto Semanal</h3>
           <Table>

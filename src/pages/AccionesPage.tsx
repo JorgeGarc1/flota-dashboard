@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "@/components/layout/PageHeader";
@@ -18,7 +17,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format, addDays } from "date-fns";
 import { es } from "date-fns/locale";
-import { CalendarIcon, Plus, FileText } from "lucide-react";
+import { CalendarIcon, Plus, FileText, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { 
@@ -28,6 +27,16 @@ import {
   resultadosEsperadosComunes,
   usuariosOrganizacion,
 } from "@/data/mock-data";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 export default function AccionesPage() {
   const navigate = useNavigate();
@@ -90,6 +99,23 @@ export default function AccionesPage() {
       evidencia: null,
     });
   };
+  
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [selectedAction, setSelectedAction] = useState<any>(null);
+
+  const handleSendNotification = async () => {
+    if (!selectedAction) return;
+    
+    try {
+      // Here you would implement the actual notification sending logic
+      // This is a placeholder that shows a success message
+      toast.success("Notificación enviada correctamente");
+      setOpenConfirmDialog(false);
+      setSelectedAction(null);
+    } catch (error) {
+      toast.error("Error al enviar la notificación");
+    }
+  };
 
   // Columnas para la tabla de acciones
   const accionesColumns = [
@@ -128,17 +154,33 @@ export default function AccionesPage() {
         return <span className={`capitalize ${color}`}>{value}</span>;
       }
     },
-    { header: "Acciones", accessor: "id",
+    { 
+      header: "Acciones", 
+      accessor: "id",
       cell: (_: any, row: any) => (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate(`/agenda?accion=${row.id}`)}
-          className="hover:bg-black/40"
-        >
-          <FileText className="h-4 w-4 mr-1" />
-          <span>Ver</span>
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(`/agenda?accion=${row.id}`)}
+            className="hover:bg-black/40"
+          >
+            <FileText className="h-4 w-4 mr-1" />
+            <span>Ver</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setSelectedAction(row);
+              setOpenConfirmDialog(true);
+            }}
+            className="hover:bg-black/40"
+          >
+            <Mail className="h-4 w-4 mr-1" />
+            <span>Enviar</span>
+          </Button>
+        </div>
       )
     },
   ];
@@ -399,6 +441,24 @@ export default function AccionesPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={openConfirmDialog} onOpenChange={setOpenConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Enviar notificación</AlertDialogTitle>
+            <AlertDialogDescription>
+              ¿Estás seguro de que deseas enviar una notificación al usuario asignado?
+              La notificación será enviada por correo electrónico, WhatsApp y la aplicación.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSendNotification}>
+              Enviar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
