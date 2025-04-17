@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -7,6 +6,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import ThemeToggle from './ThemeToggle';
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
@@ -138,9 +138,30 @@ export default function Sidebar() {
         </div>
 
         <div className={cn(
-          "border-t p-4",
+          "border-t p-4 space-y-2",
           theme === 'dark' ? "border-flota-secondary/20" : "border-gray-200"
         )}>
+          <button
+            className={cn(
+              "flex items-center justify-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full",
+              theme === 'dark' 
+                ? "text-flota-text hover:bg-black/50" 
+                : "text-gray-700 hover:bg-gray-100"
+            )}
+            onClick={toggleSidebar}
+          >
+            {isOpen ? (
+              <>
+                <ChevronLeft className="h-5 w-5" />
+                <span>Colapsar menú</span>
+              </>
+            ) : (
+              <ChevronRight className="h-5 w-5" />
+            )}
+          </button>
+
+          <ThemeToggle />
+          
           <button
             className={cn(
               "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full",
@@ -157,26 +178,6 @@ export default function Sidebar() {
             <span className={cn('transition-opacity', !isOpen && 'lg:hidden')}>
               Cerrar sesión
             </span>
-          </button>
-          
-          {/* Collapse/Expand Button */}
-          <button
-            className={cn(
-              "flex items-center justify-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors w-full mt-4",
-              theme === 'dark' 
-                ? "text-flota-text hover:bg-black/50" 
-                : "text-gray-700 hover:bg-gray-100"
-            )}
-            onClick={toggleSidebar}
-          >
-            {isOpen ? (
-              <>
-                <ChevronLeft className="h-5 w-5" />
-                <span>Colapsar menú</span>
-              </>
-            ) : (
-              <ChevronRight className="h-5 w-5" />
-            )}
           </button>
         </div>
       </aside>

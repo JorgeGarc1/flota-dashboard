@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import LineChart from "@/components/charts/LineChart";
@@ -44,6 +43,12 @@ export default function OperativoPage() {
   const [timeRange, setTimeRange] = useState("day");
   const itemsPerPage = 5;
 
+  // Add sorting state
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: 'asc' | 'desc' | null;
+  }>({ key: '', direction: null });
+
   // Estado para la visibilidad de las columnas
   const [visibleColumns, setVisibleColumns] = useState({
     numeroEco: true,
@@ -66,6 +71,19 @@ export default function OperativoPage() {
       kilometrosAcumulados
     };
   });
+
+  // Sorting function
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' | null = 'asc';
+    
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    } else if (sortConfig.key === key && sortConfig.direction === 'desc') {
+      direction = null;
+    }
+    
+    setSortConfig({ key, direction });
+  };
 
   // Configuración para el gráfico de líneas dual
   const dualAxisLines = [
@@ -107,6 +125,21 @@ export default function OperativoPage() {
     cell?: (value: any, row?: VehiculoData) => React.ReactNode;
     isVisible: boolean;
   }
+
+  // Sort data function
+  const getSortedData = (data: any[]) => {
+    if (!sortConfig.key || !sortConfig.direction) return data;
+
+    return [...data].sort((a, b) => {
+      if (a[sortConfig.key] < b[sortConfig.key]) {
+        return sortConfig.direction === 'asc' ? -1 : 1;
+      }
+      if (a[sortConfig.key] > b[sortConfig.key]) {
+        return sortConfig.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  };
   
   // Now define the columns with the proper typing
   const vehiculosColumns: TableColumn[] = [
@@ -251,7 +284,7 @@ export default function OperativoPage() {
           title="Nivel de Servicio"
           value={`${nivelServicio}%`}
           reference={`${kpisOperativos.pedidosEntregados}/${kpisOperativos.pedidosProgramados} pedidos`}
-          description="Pedidos entregados vs programados"
+          description="Validación Automática de Entregas Programadas"
           icon={<div className="flex justify-center"><PackageCheck size={32} /></div>}
         />
       </div>
@@ -323,14 +356,25 @@ export default function OperativoPage() {
             <TableHeader>
               <TableRow className="bg-black/40 border-b border-flota-secondary/20">
                 {visibleVehiculosColumns.map((column) => (
-                  <TableHead key={column.accessor as string} className="text-flota-text font-montserrat">
-                    {column.header}
+                  <TableHead 
+                    key={column.accessor as string} 
+                    className="text-flota-text font-montserrat cursor-pointer hover:bg-black/50"
+                    onClick={() => handleSort(column.accessor)}
+                  >
+                    <div className="flex items-center gap-2">
+                      {column.header}
+                      {sortConfig.key === column.accessor && (
+                        <span className="text-xs">
+                          {sortConfig.direction === 'asc' ? '↑' : sortConfig.direction === 'desc' ? '↓' : ''}
+                        </span>
+                      )}
+                    </div>
                   </TableHead>
                 ))}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginateData(vehiculosData).map((vehiculo, index) => (
+              {paginateData(getSortedData(vehiculosData)).map((vehiculo, index) => (
                 <TableRow key={index} className="border-b border-flota-secondary/10 hover:bg-black/30">
                   {visibleVehiculosColumns.map((column) => (
                     <TableCell key={column.accessor as string}>
